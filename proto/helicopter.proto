@@ -1,0 +1,31 @@
+syntax = "proto3";
+option go_package = ".;pb";
+
+message Node {
+  string lseq = 1;
+  string parent = 2;
+  bytes content = 3;
+}
+
+message GetNodesRequest {
+  string root = 1;
+  string last = 2;
+}
+
+message GetNodesResponse {
+  repeated Node nodes = 1;
+}
+
+message AddNodeRequest {
+  string parent = 1;
+  bytes content = 2;
+}
+
+message AddNodeResponse {
+  Node node = 1;
+}
+
+service Helicopter {
+  rpc GetNodes(GetNodesRequest) returns (GetNodesResponse) {}
+  rpc AddNode(AddNodeRequest) returns (AddNodeResponse) {}
+}
