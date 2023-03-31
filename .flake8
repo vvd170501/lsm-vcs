@@ -5,3 +5,7 @@ exclude =
   *_pb2.pyi,
   *_pb2_grpc.py,
   *_pb2_grpc.pyi
+
+# Ignore unused imports in __init__.py
+per-file-ignores =
+  __init__.py:F401,F403

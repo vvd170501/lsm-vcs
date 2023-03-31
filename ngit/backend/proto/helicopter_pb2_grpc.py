@@ -2,7 +2,7 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-import helicopter_pb2 as helicopter__pb2
+from ngit.backend.proto import helicopter_pb2 as ngit_dot_backend_dot_proto_dot_helicopter__pb2
 
 
 class HelicopterStub(object):
@@ -16,13 +16,13 @@ class HelicopterStub(object):
         """
         self.GetNodes = channel.unary_unary(
                 '/Helicopter/GetNodes',
-                request_serializer=helicopter__pb2.GetNodesRequest.SerializeToString,
-                response_deserializer=helicopter__pb2.GetNodesResponse.FromString,
+                request_serializer=ngit_dot_backend_dot_proto_dot_helicopter__pb2.GetNodesRequest.SerializeToString,
+                response_deserializer=ngit_dot_backend_dot_proto_dot_helicopter__pb2.GetNodesResponse.FromString,
                 )
         self.AddNode = channel.unary_unary(
                 '/Helicopter/AddNode',
-                request_serializer=helicopter__pb2.AddNodeRequest.SerializeToString,
-                response_deserializer=helicopter__pb2.AddNodeResponse.FromString,
+                request_serializer=ngit_dot_backend_dot_proto_dot_helicopter__pb2.AddNodeRequest.SerializeToString,
+                response_deserializer=ngit_dot_backend_dot_proto_dot_helicopter__pb2.AddNodeResponse.FromString,
                 )
 
 
@@ -46,13 +46,13 @@ def add_HelicopterServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'GetNodes': grpc.unary_unary_rpc_method_handler(
                     servicer.GetNodes,
-                    request_deserializer=helicopter__pb2.GetNodesRequest.FromString,
-                    response_serializer=helicopter__pb2.GetNodesResponse.SerializeToString,
+                    request_deserializer=ngit_dot_backend_dot_proto_dot_helicopter__pb2.GetNodesRequest.FromString,
+                    response_serializer=ngit_dot_backend_dot_proto_dot_helicopter__pb2.GetNodesResponse.SerializeToString,
             ),
             'AddNode': grpc.unary_unary_rpc_method_handler(
                     servicer.AddNode,
-                    request_deserializer=helicopter__pb2.AddNodeRequest.FromString,
-                    response_serializer=helicopter__pb2.AddNodeResponse.SerializeToString,
+                    request_deserializer=ngit_dot_backend_dot_proto_dot_helicopter__pb2.AddNodeRequest.FromString,
+                    response_serializer=ngit_dot_backend_dot_proto_dot_helicopter__pb2.AddNodeResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -76,8 +76,8 @@ class Helicopter(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/Helicopter/GetNodes',
-            helicopter__pb2.GetNodesRequest.SerializeToString,
-            helicopter__pb2.GetNodesResponse.FromString,
+            ngit_dot_backend_dot_proto_dot_helicopter__pb2.GetNodesRequest.SerializeToString,
+            ngit_dot_backend_dot_proto_dot_helicopter__pb2.GetNodesResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -93,7 +93,7 @@ class Helicopter(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/Helicopter/AddNode',
-            helicopter__pb2.AddNodeRequest.SerializeToString,
-            helicopter__pb2.AddNodeResponse.FromString,
+            ngit_dot_backend_dot_proto_dot_helicopter__pb2.AddNodeRequest.SerializeToString,
+            ngit_dot_backend_dot_proto_dot_helicopter__pb2.AddNodeResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

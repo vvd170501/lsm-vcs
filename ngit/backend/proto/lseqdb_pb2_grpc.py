@@ -3,7 +3,7 @@
 import grpc
 
 from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
-import lseqdb_pb2 as lseqdb__pb2
+from ngit.backend.proto import lseqdb_pb2 as ngit_dot_backend_dot_proto_dot_lseqdb__pb2
 
 
 class LSeqDatabaseStub(object):
@@ -17,32 +17,32 @@ class LSeqDatabaseStub(object):
         """
         self.GetValue = channel.unary_unary(
                 '/lseqdb.LSeqDatabase/GetValue',
-                request_serializer=lseqdb__pb2.ReplicaKey.SerializeToString,
-                response_deserializer=lseqdb__pb2.Value.FromString,
+                request_serializer=ngit_dot_backend_dot_proto_dot_lseqdb__pb2.ReplicaKey.SerializeToString,
+                response_deserializer=ngit_dot_backend_dot_proto_dot_lseqdb__pb2.Value.FromString,
                 )
         self.Put = channel.unary_unary(
                 '/lseqdb.LSeqDatabase/Put',
-                request_serializer=lseqdb__pb2.PutRequest.SerializeToString,
-                response_deserializer=lseqdb__pb2.LSeq.FromString,
+                request_serializer=ngit_dot_backend_dot_proto_dot_lseqdb__pb2.PutRequest.SerializeToString,
+                response_deserializer=ngit_dot_backend_dot_proto_dot_lseqdb__pb2.LSeq.FromString,
                 )
         self.SeekGet = channel.unary_unary(
                 '/lseqdb.LSeqDatabase/SeekGet',
-                request_serializer=lseqdb__pb2.SeekGetRequest.SerializeToString,
-                response_deserializer=lseqdb__pb2.DBItems.FromString,
+                request_serializer=ngit_dot_backend_dot_proto_dot_lseqdb__pb2.SeekGetRequest.SerializeToString,
+                response_deserializer=ngit_dot_backend_dot_proto_dot_lseqdb__pb2.DBItems.FromString,
                 )
         self.GetReplicaEvents = channel.unary_unary(
                 '/lseqdb.LSeqDatabase/GetReplicaEvents',
-                request_serializer=lseqdb__pb2.EventsRequest.SerializeToString,
-                response_deserializer=lseqdb__pb2.DBItems.FromString,
+                request_serializer=ngit_dot_backend_dot_proto_dot_lseqdb__pb2.EventsRequest.SerializeToString,
+                response_deserializer=ngit_dot_backend_dot_proto_dot_lseqdb__pb2.DBItems.FromString,
                 )
         self.SyncGet_ = channel.unary_unary(
                 '/lseqdb.LSeqDatabase/SyncGet_',
-                request_serializer=lseqdb__pb2.SyncGetRequest.SerializeToString,
-                response_deserializer=lseqdb__pb2.LSeq.FromString,
+                request_serializer=ngit_dot_backend_dot_proto_dot_lseqdb__pb2.SyncGetRequest.SerializeToString,
+                response_deserializer=ngit_dot_backend_dot_proto_dot_lseqdb__pb2.LSeq.FromString,
                 )
         self.SyncPut_ = channel.unary_unary(
                 '/lseqdb.LSeqDatabase/SyncPut_',
-                request_serializer=lseqdb__pb2.DBItems.SerializeToString,
+                request_serializer=ngit_dot_backend_dot_proto_dot_lseqdb__pb2.DBItems.SerializeToString,
                 response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
                 )
 
@@ -94,32 +94,32 @@ def add_LSeqDatabaseServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'GetValue': grpc.unary_unary_rpc_method_handler(
                     servicer.GetValue,
-                    request_deserializer=lseqdb__pb2.ReplicaKey.FromString,
-                    response_serializer=lseqdb__pb2.Value.SerializeToString,
+                    request_deserializer=ngit_dot_backend_dot_proto_dot_lseqdb__pb2.ReplicaKey.FromString,
+                    response_serializer=ngit_dot_backend_dot_proto_dot_lseqdb__pb2.Value.SerializeToString,
             ),
             'Put': grpc.unary_unary_rpc_method_handler(
                     servicer.Put,
-                    request_deserializer=lseqdb__pb2.PutRequest.FromString,
-                    response_serializer=lseqdb__pb2.LSeq.SerializeToString,
+                    request_deserializer=ngit_dot_backend_dot_proto_dot_lseqdb__pb2.PutRequest.FromString,
+                    response_serializer=ngit_dot_backend_dot_proto_dot_lseqdb__pb2.LSeq.SerializeToString,
             ),
             'SeekGet': grpc.unary_unary_rpc_method_handler(
                     servicer.SeekGet,
-                    request_deserializer=lseqdb__pb2.SeekGetRequest.FromString,
-                    response_serializer=lseqdb__pb2.DBItems.SerializeToString,
+                    request_deserializer=ngit_dot_backend_dot_proto_dot_lseqdb__pb2.SeekGetRequest.FromString,
+                    response_serializer=ngit_dot_backend_dot_proto_dot_lseqdb__pb2.DBItems.SerializeToString,
             ),
             'GetReplicaEvents': grpc.unary_unary_rpc_method_handler(
                     servicer.GetReplicaEvents,
-                    request_deserializer=lseqdb__pb2.EventsRequest.FromString,
-                    response_serializer=lseqdb__pb2.DBItems.SerializeToString,
+                    request_deserializer=ngit_dot_backend_dot_proto_dot_lseqdb__pb2.EventsRequest.FromString,
+                    response_serializer=ngit_dot_backend_dot_proto_dot_lseqdb__pb2.DBItems.SerializeToString,
             ),
             'SyncGet_': grpc.unary_unary_rpc_method_handler(
                     servicer.SyncGet_,
-                    request_deserializer=lseqdb__pb2.SyncGetRequest.FromString,
-                    response_serializer=lseqdb__pb2.LSeq.SerializeToString,
+                    request_deserializer=ngit_dot_backend_dot_proto_dot_lseqdb__pb2.SyncGetRequest.FromString,
+                    response_serializer=ngit_dot_backend_dot_proto_dot_lseqdb__pb2.LSeq.SerializeToString,
             ),
             'SyncPut_': grpc.unary_unary_rpc_method_handler(
                     servicer.SyncPut_,
-                    request_deserializer=lseqdb__pb2.DBItems.FromString,
+                    request_deserializer=ngit_dot_backend_dot_proto_dot_lseqdb__pb2.DBItems.FromString,
                     response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
             ),
     }
@@ -144,8 +144,8 @@ class LSeqDatabase(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/lseqdb.LSeqDatabase/GetValue',
-            lseqdb__pb2.ReplicaKey.SerializeToString,
-            lseqdb__pb2.Value.FromString,
+            ngit_dot_backend_dot_proto_dot_lseqdb__pb2.ReplicaKey.SerializeToString,
+            ngit_dot_backend_dot_proto_dot_lseqdb__pb2.Value.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -161,8 +161,8 @@ class LSeqDatabase(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/lseqdb.LSeqDatabase/Put',
-            lseqdb__pb2.PutRequest.SerializeToString,
-            lseqdb__pb2.LSeq.FromString,
+            ngit_dot_backend_dot_proto_dot_lseqdb__pb2.PutRequest.SerializeToString,
+            ngit_dot_backend_dot_proto_dot_lseqdb__pb2.LSeq.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -178,8 +178,8 @@ class LSeqDatabase(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/lseqdb.LSeqDatabase/SeekGet',
-            lseqdb__pb2.SeekGetRequest.SerializeToString,
-            lseqdb__pb2.DBItems.FromString,
+            ngit_dot_backend_dot_proto_dot_lseqdb__pb2.SeekGetRequest.SerializeToString,
+            ngit_dot_backend_dot_proto_dot_lseqdb__pb2.DBItems.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -195,8 +195,8 @@ class LSeqDatabase(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/lseqdb.LSeqDatabase/GetReplicaEvents',
-            lseqdb__pb2.EventsRequest.SerializeToString,
-            lseqdb__pb2.DBItems.FromString,
+            ngit_dot_backend_dot_proto_dot_lseqdb__pb2.EventsRequest.SerializeToString,
+            ngit_dot_backend_dot_proto_dot_lseqdb__pb2.DBItems.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -212,8 +212,8 @@ class LSeqDatabase(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/lseqdb.LSeqDatabase/SyncGet_',
-            lseqdb__pb2.SyncGetRequest.SerializeToString,
-            lseqdb__pb2.LSeq.FromString,
+            ngit_dot_backend_dot_proto_dot_lseqdb__pb2.SyncGetRequest.SerializeToString,
+            ngit_dot_backend_dot_proto_dot_lseqdb__pb2.LSeq.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -229,7 +229,7 @@ class LSeqDatabase(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/lseqdb.LSeqDatabase/SyncPut_',
-            lseqdb__pb2.DBItems.SerializeToString,
+            ngit_dot_backend_dot_proto_dot_lseqdb__pb2.DBItems.SerializeToString,
             google_dot_protobuf_dot_empty__pb2.Empty.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
