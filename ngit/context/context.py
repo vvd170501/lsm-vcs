@@ -1,9 +1,9 @@
 from os import environ, getcwd
 
-from ..backend import BaseServer, HelicopterServer
+from ..backend import BaseBackend, HelicopterBackend
 from ..fs import BaseFS, LocalFS
 
-__all__ = ['GetContext']
+__all__ = ['get_context']
 
 
 class Singleton(type):
@@ -16,7 +16,7 @@ class Singleton(type):
 
 
 class Context(metaclass=Singleton):
-    def __init__(self, fs: BaseFS, server: BaseServer) -> None:
+    def __init__(self, fs: BaseFS, server: BaseBackend) -> None:
         self._fs = fs
         self._server = server
 
@@ -32,14 +32,20 @@ class Context(metaclass=Singleton):
 _context = None
 
 
-def GetContext() -> Context:  # Add args for first call?
+# A separate function is used to allow monkeypatching
+# (if get_context is imported into another module, it won't be patched)
+def _get_context() -> Context:
     global _context
     if _context is None:
         _context = Context(
             LocalFS(getcwd()),
-            HelicopterServer(
+            HelicopterBackend(
                 environ.get('HELICOPTER_ADDRESS', 'localhost'),
                 int(environ.get('HELICOPTER_PORT', '8888'))
             )
         )
     return _context
+
+
+def get_context() -> Context:
+    return _get_context()

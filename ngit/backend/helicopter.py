@@ -15,8 +15,7 @@ __all__ = ['HelicopterBackend']
 
 
 class HelicopterBackend(BaseBackend):
-    def __init__(self, host: str, port: int, db_host: str, db_port: int) -> None:
-
+    def __init__(self, host: str, port: int) -> None:
         self._server_channel = grpc.insecure_channel(f'{host}:{port}')
         self._server_stub = HelicopterStub(self._server_channel)
 

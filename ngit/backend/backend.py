@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 
-__all__ = ['BaseBackend']
+__all__ = ['BaseBackend', 'Node', 'NodeId', 'RemoteId']
 
 
 RemoteId = str
