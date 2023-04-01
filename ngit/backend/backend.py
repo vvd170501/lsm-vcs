@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from collections.abc import Iterator
 from dataclasses import dataclass
 
 __all__ = ['BaseBackend', 'Node', 'NodeId', 'RemoteId']
@@ -21,7 +22,7 @@ class BaseBackend(ABC):
         pass
 
     @abstractmethod
-    def get_nodes(self, root: NodeId, last: NodeId) -> list[Node]:
+    def get_nodes(self, root: NodeId, last: NodeId) -> Iterator[Node]:  # TODO add reverse order?
         """Returns all nodes in subtree of `root` with ids greater than `last`."""
         pass
 

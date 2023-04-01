@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections.abc import Iterator
 from os import PathLike
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -60,14 +61,12 @@ class MockBackend(BaseBackend):
         self._nodes[new_node.id] = new_node
         return NodeId(new_node.id)
 
-    def get_nodes(self, root: NodeId, last: NodeId) -> list[Node]:
+    def get_nodes(self, root: NodeId, last: NodeId) -> Iterator[Node]:
         """Returns all nodes in subtree of `root` with ids greater than `last` (root is always excluded)."""
         root_id = self._parse_node_id(root)
-        last_id = self._parse_node_id(root, must_exist=False)
+        last_id = self._parse_node_id(last, must_exist=False)
         subtree = self._nodes[root_id]
-        result: list[Node] = []
-        self._collect_nodes(subtree, last_id, result)
-        return result
+        yield from self._collect_nodes(subtree, last_id)
 
     def sync(self, remote: RemoteId):
         raise NotImplementedError()
@@ -81,12 +80,12 @@ class MockBackend(BaseBackend):
             assert node_id in self._nodes, f'Unknown node id "{node_id}"'
         return node_id
 
-    def _collect_nodes(self, subtree: Tree, last_id: int, result: list[Node]):
+    def _collect_nodes(self, subtree: Tree, last_id: int) -> Iterator[Node]:
         for child in subtree.children:
             if child.id > last_id:
-                result.append(Node(
+                yield Node(
                     id=NodeId(child.id),
                     parent=subtree.id,
                     content=child.content
-                ))
-            self._collect_nodes(child. last_id, result)
+                )
+            yield from self._collect_nodes(child, last_id)
