@@ -10,13 +10,9 @@ from ngit.fs import BaseFS
 
 
 class MockFS(BaseFS):
-    def __init__(self, files: dict[str, bytes]) -> None:
+    def __init__(self) -> None:
         self._dir = TemporaryDirectory()
         self._root = Path(self._dir.name)
-        for path, content in files.items():
-            file = self._root / path
-            file.parent.mkdir(parents=True, exist_ok=True)
-            file.write_bytes(content)
 
     def read_file(self, path: str | PathLike) -> bytes | None:
         file = self._root / path
@@ -61,7 +57,7 @@ class MockBackend(BaseBackend):
         self._nodes[new_node.id] = new_node
         return NodeId(new_node.id)
 
-    def get_nodes(self, root: NodeId, last: NodeId) -> Iterator[Node]:
+    def get_nodes(self, root: NodeId, last: NodeId = '') -> Iterator[Node]:
         """Returns all nodes in subtree of `root` with ids greater than `last` (root is always excluded)."""
         root_id = self._parse_node_id(root)
         last_id = self._parse_node_id(last, must_exist=False)

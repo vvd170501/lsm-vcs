@@ -29,7 +29,7 @@ class HelicopterBackend(BaseBackend):
         resp: AddNodeResponse = self._server_stub.AddNode(request)
         return resp.node.lseq
 
-    def get_nodes(self, root: NodeId, last: NodeId) -> Iterator[Node]:
+    def get_nodes(self, root: NodeId, last: NodeId = '') -> Iterator[Node]:
         request = GetNodesRequest(root=root, last=last)
         resp: GetNodesResponse = self._server_stub.GetNodes(request)
         return (

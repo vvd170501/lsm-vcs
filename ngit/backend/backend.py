@@ -22,7 +22,7 @@ class BaseBackend(ABC):
         pass
 
     @abstractmethod
-    def get_nodes(self, root: NodeId, last: NodeId) -> Iterator[Node]:  # TODO add reverse order?
+    def get_nodes(self, root: NodeId, last: NodeId = '') -> Iterator[Node]:  # TODO add reverse order?
         """Returns all nodes in subtree of `root` with ids greater than `last`."""
         pass
 

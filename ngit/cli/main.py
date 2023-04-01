@@ -6,6 +6,7 @@ from .checkout import checkout
 from .commit import commit
 from .diff import diff
 from .fetch import fetch
+from .init import init
 from .log import log
 from .merge import merge
 from .show import show
@@ -23,6 +24,7 @@ for cmd in [
     commit,
     diff,
     fetch,
+    init,
     log,
     merge,
     # pull,

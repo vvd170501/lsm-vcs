@@ -1,22 +1,17 @@
-import pickle
 import pytest
 
 from ngit.cli.branch import _create_branch, _list_branches
+from ngit.core.nodes import resolve_named_node
 
 from conftest import NGitTest, Context
 
 
 class TestBranch(NGitTest):
-    FILES = {
-        '.ngit/HEAD': b'111'
-    }
 
     @pytest.fixture(autouse=True)
-    def setup_server(self, mock_context: Context):
-        branches_node_id = mock_context.server.add_node('', b'')
-        mock_context.fs.write_file('.ngit/node_ids', pickle.dumps({
-            'branch': branches_node_id,
-        }))
+    def setup(self, init_repo, mock_context: Context) -> None:
+        branches_node_id = resolve_named_node('branch')
+        assert branches_node_id
         mock_context.server.add_node(branches_node_id, b'main/123')
         mock_context.server.add_node(branches_node_id, b'test/456')
         mock_context.server.add_node(branches_node_id, b'main/789')  # Ref was updated
