@@ -13,7 +13,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n#ngit/backend/proto/helicopter.proto\"5\n\x04Node\x12\x0c\n\x04lseq\x18\x01 \x01(\t\x12\x0e\n\x06parent\x18\x02 \x01(\t\x12\x0f\n\x07\x63ontent\x18\x03 \x01(\x0c\"-\n\x0fGetNodesRequest\x12\x0c\n\x04root\x18\x01 \x01(\t\x12\x0c\n\x04last\x18\x02 \x01(\t\"(\n\x10GetNodesResponse\x12\x14\n\x05nodes\x18\x01 \x03(\x0b\x32\x05.Node\"1\n\x0e\x41\x64\x64NodeRequest\x12\x0e\n\x06parent\x18\x01 \x01(\t\x12\x0f\n\x07\x63ontent\x18\x02 \x01(\x0c\"&\n\x0f\x41\x64\x64NodeResponse\x12\x13\n\x04node\x18\x01 \x01(\x0b\x32\x05.Node2o\n\nHelicopter\x12\x31\n\x08GetNodes\x12\x10.GetNodesRequest\x1a\x11.GetNodesResponse\"\x00\x12.\n\x07\x41\x64\x64Node\x12\x0f.AddNodeRequest\x1a\x10.AddNodeResponse\"\x00\x42\x06Z\x04.;pbb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n#ngit/backend/proto/helicopter.proto\x12\nhelicopter\"5\n\x04Node\x12\x0c\n\x04lseq\x18\x01 \x01(\t\x12\x0e\n\x06parent\x18\x02 \x01(\t\x12\x0f\n\x07\x63ontent\x18\x03 \x01(\x0c\"-\n\x0fGetNodesRequest\x12\x0c\n\x04root\x18\x01 \x01(\t\x12\x0c\n\x04last\x18\x02 \x01(\t\"3\n\x10GetNodesResponse\x12\x1f\n\x05nodes\x18\x01 \x03(\x0b\x32\x10.helicopter.Node\"1\n\x0e\x41\x64\x64NodeRequest\x12\x0e\n\x06parent\x18\x01 \x01(\t\x12\x0f\n\x07\x63ontent\x18\x02 \x01(\x0c\"1\n\x0f\x41\x64\x64NodeResponse\x12\x1e\n\x04node\x18\x01 \x01(\x0b\x32\x10.helicopter.Node2\x9b\x01\n\nHelicopter\x12G\n\x08GetNodes\x12\x1b.helicopter.GetNodesRequest\x1a\x1c.helicopter.GetNodesResponse\"\x00\x12\x44\n\x07\x41\x64\x64Node\x12\x1a.helicopter.AddNodeRequest\x1a\x1b.helicopter.AddNodeResponse\"\x00\x42\x06Z\x04.;pbb\x06proto3')
 
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, globals())
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'ngit.backend.proto.helicopter_pb2', globals())
@@ -21,16 +21,16 @@ if _descriptor._USE_C_DESCRIPTORS == False:
 
   DESCRIPTOR._options = None
   DESCRIPTOR._serialized_options = b'Z\004.;pb'
-  _NODE._serialized_start=39
-  _NODE._serialized_end=92
-  _GETNODESREQUEST._serialized_start=94
-  _GETNODESREQUEST._serialized_end=139
-  _GETNODESRESPONSE._serialized_start=141
-  _GETNODESRESPONSE._serialized_end=181
-  _ADDNODEREQUEST._serialized_start=183
-  _ADDNODEREQUEST._serialized_end=232
-  _ADDNODERESPONSE._serialized_start=234
-  _ADDNODERESPONSE._serialized_end=272
-  _HELICOPTER._serialized_start=274
-  _HELICOPTER._serialized_end=385
+  _NODE._serialized_start=51
+  _NODE._serialized_end=104
+  _GETNODESREQUEST._serialized_start=106
+  _GETNODESREQUEST._serialized_end=151
+  _GETNODESRESPONSE._serialized_start=153
+  _GETNODESRESPONSE._serialized_end=204
+  _ADDNODEREQUEST._serialized_start=206
+  _ADDNODEREQUEST._serialized_end=255
+  _ADDNODERESPONSE._serialized_start=257
+  _ADDNODERESPONSE._serialized_end=306
+  _HELICOPTER._serialized_start=309
+  _HELICOPTER._serialized_end=464
 # @@protoc_insertion_point(module_scope)

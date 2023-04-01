@@ -15,12 +15,12 @@ class HelicopterStub(object):
             channel: A grpc.Channel.
         """
         self.GetNodes = channel.unary_unary(
-                '/Helicopter/GetNodes',
+                '/helicopter.Helicopter/GetNodes',
                 request_serializer=ngit_dot_backend_dot_proto_dot_helicopter__pb2.GetNodesRequest.SerializeToString,
                 response_deserializer=ngit_dot_backend_dot_proto_dot_helicopter__pb2.GetNodesResponse.FromString,
                 )
         self.AddNode = channel.unary_unary(
-                '/Helicopter/AddNode',
+                '/helicopter.Helicopter/AddNode',
                 request_serializer=ngit_dot_backend_dot_proto_dot_helicopter__pb2.AddNodeRequest.SerializeToString,
                 response_deserializer=ngit_dot_backend_dot_proto_dot_helicopter__pb2.AddNodeResponse.FromString,
                 )
@@ -56,7 +56,7 @@ def add_HelicopterServicer_to_server(servicer, server):
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'Helicopter', rpc_method_handlers)
+            'helicopter.Helicopter', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
 
@@ -75,7 +75,7 @@ class Helicopter(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/Helicopter/GetNodes',
+        return grpc.experimental.unary_unary(request, target, '/helicopter.Helicopter/GetNodes',
             ngit_dot_backend_dot_proto_dot_helicopter__pb2.GetNodesRequest.SerializeToString,
             ngit_dot_backend_dot_proto_dot_helicopter__pb2.GetNodesResponse.FromString,
             options, channel_credentials,
@@ -92,7 +92,7 @@ class Helicopter(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/Helicopter/AddNode',
+        return grpc.experimental.unary_unary(request, target, '/helicopter.Helicopter/AddNode',
             ngit_dot_backend_dot_proto_dot_helicopter__pb2.AddNodeRequest.SerializeToString,
             ngit_dot_backend_dot_proto_dot_helicopter__pb2.AddNodeResponse.FromString,
             options, channel_credentials,

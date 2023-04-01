@@ -40,7 +40,7 @@ def _get_context() -> Context:
         _context = Context(
             LocalFS(getcwd()),
             HelicopterBackend(
-                environ.get('HELICOPTER_ADDRESS', 'localhost'),
+                environ.get('HELICOPTER_ADDRESS', '127.0.0.1'),
                 int(environ.get('HELICOPTER_PORT', '8888'))
             )
         )

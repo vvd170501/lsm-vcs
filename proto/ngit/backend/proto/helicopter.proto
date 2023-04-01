@@ -1,4 +1,7 @@
 syntax = "proto3";
+
+package helicopter;
+
 option go_package = ".;pb";
 
 message Node {
