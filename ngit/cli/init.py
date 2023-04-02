@@ -48,6 +48,11 @@ def unpack_project(project_id: str):
     if not project_id:
         raise click.ClickException('Project id must not be empty')
     root_node: NodeId = b64decode(project_id).decode()
+    for node in get_context().server.get_nodes(''):  # TODO limit
+        if node.id == root_node:
+            break
+    else:
+        raise click.ClickException('Invalid project id')
     assign_name(root_node, NodeNames.ROOT)
     subnodes = get_context().server.get_nodes(root_node)  # TODO limit
     assign_name(next(subnodes).id, NodeNames.BRANCH_EVENTS)
