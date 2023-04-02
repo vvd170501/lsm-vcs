@@ -1,5 +1,5 @@
 from collections.abc import Iterator
-from typing import NamedTuple
+from dataclasses import dataclass
 
 from ..backend import NodeId
 from ..context import get_context
@@ -16,7 +16,13 @@ def set_head_ref(ref: NodeId) -> None:
     get_context().fs.write_file('.ngit/HEAD', ref.encode())
 
 
-Branch = NamedTuple('Branch', [('name', str), ('ref', NodeId)])
+@dataclass
+class Branch:
+    name: str
+    ref: NodeId
+
+    def __bool__(self):
+        return self.ref != '[del]'
 
 
 def get_branch_events() -> Iterator[Branch]:

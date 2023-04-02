@@ -6,16 +6,7 @@ from ..fs import BaseFS, LocalFS
 __all__ = ['get_context']
 
 
-class Singleton(type):
-    _instances = {}
-
-    def __call__(cls, *args, **kwargs):
-        if cls not in cls._instances:
-            cls._instances[cls] = super(Singleton, cls).__call__(*args, **kwargs)
-        return cls._instances[cls]
-
-
-class Context(metaclass=Singleton):
+class Context:
     def __init__(self, fs: BaseFS, server: BaseBackend) -> None:
         self._fs = fs
         self._server = server

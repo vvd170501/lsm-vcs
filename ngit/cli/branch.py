@@ -28,8 +28,9 @@ def _create_branch(new_branch_name: str):
     # - Use a separate subtree for ech branch
     for branch in get_branch_events():
         if branch.name == new_branch_name:
-            exists = bool(branch.ref)
-    assert not exists, f'Branch "{new_branch_name}" already exists'
+            exists = bool(branch)
+    if exists:
+        raise click.exceptions.ClickException(f'Branch "{new_branch_name}" already exists')
     get_context().server.add_node(resolve_named_node('branch'), f'{new_branch_name}/{get_head_ref()}'.encode())
 
 
@@ -37,7 +38,7 @@ def _list_branches() -> list[str]:
     """Returns sorted list of branch names."""
     branches = set()
     for branch in get_branch_events():
-        if branch.ref == '[del]':  # The branch was deleted
+        if not branch:  # The branch was deleted
             branches.discard(branch.name)
         else:
             branches.add(branch.name)

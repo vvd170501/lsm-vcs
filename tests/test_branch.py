@@ -25,3 +25,9 @@ class TestBranch(NGitTest):
     def test_create_branch(self):
         _create_branch('test2')
         assert _list_branches() == ['main', 'test', 'test2']
+
+    def test_create_branch_already_exists(self):
+        assert _list_branches() == ['main', 'test']
+        _create_branch('test2')
+        with pytest.raises(Exception, match='Branch "test2" already exists'):
+            _create_branch('test2')
