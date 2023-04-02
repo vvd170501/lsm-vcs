@@ -22,6 +22,7 @@ class LocalFS(BaseFS):
         file.parent.mkdir(parents=True, exist_ok=True)
         return file.write_bytes(content)
 
+    @property
     def is_ngit_repo(self) -> bool:
         return self._is_ngit_root(self._root)
 

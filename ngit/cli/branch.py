@@ -3,10 +3,12 @@ import click
 from ..context import get_context
 from ..core.nodes import resolve_named_node
 from ..core.refs import get_branch_events, get_head
+from .common import require_repo
 
 
 @click.command()
 @click.argument('branch', required=False)
+@require_repo
 def branch(branch: str | None):
     if branch is not None:
         create_branch(branch)

@@ -1,8 +1,11 @@
 import click
 
+from .common import require_repo
+
 
 @click.command()
 @click.argument('ref', default='HEAD')
+@require_repo
 def diff(**kwargs):
     return _diff(**kwargs)
 
