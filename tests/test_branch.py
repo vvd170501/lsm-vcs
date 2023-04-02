@@ -9,7 +9,7 @@ from conftest import NGitTest, Context
 class TestBranch(NGitTest):
 
     @pytest.fixture(autouse=True)
-    def setup(self, init_repo, mock_context: Context) -> None:
+    def setup(self, init_repo, mock_context: Context) -> None:  # init_repo is requested for correct init order
         branches_node_id = resolve_named_node('branch')
         assert branches_node_id
         mock_context.server.add_node(branches_node_id, b'main/123')

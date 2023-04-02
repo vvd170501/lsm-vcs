@@ -9,10 +9,10 @@ from .common import require_repo
 @click.command()
 @require_repo
 def project_id(**kwargs):
-    click.echo(_project_id(**kwargs))
+    click.echo(get_project_id(**kwargs))
 
 
-def _project_id() -> str:
+def get_project_id() -> str:
     proj_id = resolve_named_node('root')
     assert proj_id
     # To avoid special chars (e.g. '#' or any control chars)

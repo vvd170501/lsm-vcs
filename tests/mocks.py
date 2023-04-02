@@ -63,8 +63,10 @@ class MockBackend(BaseBackend):
 
     def get_nodes(self, root: NodeId, last: NodeId = '') -> Iterator[Node]:
         """Returns all nodes in subtree of `root` with ids greater than `last` (root is always excluded)."""
-        root_id = self._parse_node_id(root)
+        root_id = self._parse_node_id(root, must_exist=False)
         last_id = self._parse_node_id(last, must_exist=False)
+        if root_id not in self._nodes:
+            return
         subtree = self._nodes[root_id]
         yield from self._collect_nodes(subtree, last_id)
 

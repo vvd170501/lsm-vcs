@@ -44,7 +44,7 @@ def init_project():
 def unpack_project(project_id: str):
     # The project must already exist in the local DB replica.
     if resolve_named_node(NodeNames.ROOT):
-        raise click.ClickException('Project is already initialized, cannot change id')
+        raise click.ClickException('Project is already initialized, cannot re-init')
     if not project_id:
         raise click.ClickException('Project id must not be empty')
     root_node: NodeId = b64decode(project_id).decode()
