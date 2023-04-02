@@ -26,6 +26,9 @@ class MockFS(BaseFS):
         file.parent.mkdir(parents=True, exist_ok=True)
         return file.write_bytes(content)
 
+    def is_ngit_repo(self) -> bool:
+        return True
+
     def __del__(self):
         self._dir.cleanup()
 

@@ -2,7 +2,7 @@ import pytest
 
 import ngit.context
 from ngit.context.context import Context
-from ngit.cli.init import _init
+from ngit.cli.init import init_project
 
 from mocks import MockFS, MockBackend
 
@@ -20,4 +20,4 @@ class NGitTest:
 
     @pytest.fixture(autouse=True)
     def init_repo(self, mock_context: Context) -> None:
-        _init()
+        init_project()

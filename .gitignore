@@ -5,3 +5,5 @@ build
 venv
 
 *.code-workspace
+
+.ngit

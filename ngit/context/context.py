@@ -1,4 +1,4 @@
-from os import environ, getcwd
+from os import environ
 
 from ..backend import BaseBackend, HelicopterBackend
 from ..fs import BaseFS, LocalFS
@@ -29,7 +29,7 @@ def _get_context() -> Context:
     global _context
     if _context is None:
         _context = Context(
-            LocalFS(getcwd()),
+            LocalFS(),
             HelicopterBackend(
                 environ.get('HELICOPTER_ADDRESS', '127.0.0.1'),
                 int(environ.get('HELICOPTER_PORT', '8888'))

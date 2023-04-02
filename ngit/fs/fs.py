@@ -13,3 +13,8 @@ class BaseFS(ABC):
     @abstractmethod
     def write_file(self, path: str | PathLike, content: bytes) -> int:
         pass
+
+    @property
+    @abstractmethod
+    def is_ngit_repo(self) -> bool:
+        pass

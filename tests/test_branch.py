@@ -1,6 +1,6 @@
 import pytest
 
-from ngit.cli.branch import _create_branch, _list_branches
+from ngit.cli.branch import create_branch, list_branches
 from ngit.core.nodes import resolve_named_node
 
 from conftest import NGitTest, Context
@@ -20,14 +20,14 @@ class TestBranch(NGitTest):
 
     def test_list_branches(self):
         # Not sure, maybe it's better to check stdout. After all, we're testing a CLI app
-        assert _list_branches() == ['main', 'test']
+        assert list_branches() == ['main', 'test']
 
     def test_create_branch(self):
-        _create_branch('test2')
-        assert _list_branches() == ['main', 'test', 'test2']
+        create_branch('test2')
+        assert list_branches() == ['main', 'test', 'test2']
 
     def test_create_branch_already_exists(self):
-        assert _list_branches() == ['main', 'test']
-        _create_branch('test2')
+        assert list_branches() == ['main', 'test']
+        create_branch('test2')
         with pytest.raises(Exception, match='Branch "test2" already exists'):
-            _create_branch('test2')
+            create_branch('test2')

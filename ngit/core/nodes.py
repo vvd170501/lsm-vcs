@@ -18,7 +18,7 @@ def resolve_named_node(name: str | bytes) -> NodeId:
     return _get_node_ids().get(name, NodeId())
 
 
-def create_named_node(parent: NodeId, name: str | bytes, exist_ok: bool = False) -> NodeId:
+def create_named_node(parent: NodeId, name: str | bytes, content: str | bytes = b'', exist_ok: bool = False) -> NodeId:
     if isinstance(name, str):
         name = name.encode()
         ctx = get_context()
@@ -27,6 +27,8 @@ def create_named_node(parent: NodeId, name: str | bytes, exist_ok: bool = False)
         if not exist_ok:
             raise RuntimeError(f'Named nodes must be unique (node "{name}" already exists)')
         return node_ids[name]
-    node_ids[name] = ctx.server.add_node(parent, b'')
+    if isinstance(content, str):
+        content = content.encode()
+    node_ids[name] = ctx.server.add_node(parent, content)
     ctx.fs.write_file('.ngit/node_ids', pickle.dumps(node_ids))
     return node_ids[name]

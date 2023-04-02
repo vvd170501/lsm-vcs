@@ -5,15 +5,16 @@ from ..backend import NodeId
 from ..context import get_context
 from .nodes import resolve_named_node
 
-__all__ = ['get_head_ref', 'set_head_ref']
+__all__ = ['get_head', 'set_head_ref']
 
 
-def get_head_ref() -> NodeId:
-    return get_context().fs.read_file('.ngit/HEAD').decode()
+def get_head() -> tuple[NodeId, str]:
+    """Returns (ref, branch)"""
+    return get_context().fs.read_file('.ngit/HEAD').decode().split('/')
 
 
-def set_head_ref(ref: NodeId) -> None:
-    get_context().fs.write_file('.ngit/HEAD', ref.encode())
+def set_head_ref(ref: NodeId, branch: str = '') -> None:
+    get_context().fs.write_file('.ngit/HEAD', f'{branch}/{ref}'.encode())
 
 
 @dataclass
