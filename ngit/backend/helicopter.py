@@ -25,11 +25,14 @@ class HelicopterBackend(BaseBackend):
         self._server_channel.close()
 
     def add_node(self, parent: NodeId, content: bytes) -> NodeId:
+        if not parent:
+            parent = '0'
         request = AddNodeRequest(parent=parent, content=content)
         resp: AddNodeResponse = self._server_stub.AddNode(request)
         return resp.node.lseq
 
-    def get_nodes(self, root: NodeId, last: NodeId = '') -> Iterator[Node]:
+    def get_nodes(self, root: NodeId, last: NodeId = '0') -> Iterator[Node]:
+        assert root
         request = GetNodesRequest(root=root, last=last)
         resp: GetNodesResponse = self._server_stub.GetNodes(request)
         return (
