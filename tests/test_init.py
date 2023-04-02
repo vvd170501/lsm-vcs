@@ -53,7 +53,7 @@ class TestInit(NGitTest):
             other_proj_id = get_project_id()
             assert other_proj_id != proj_id
 
-            with pytest.raises(Exception, match='Project is already initialized, cannot unpack'):
+            with pytest.raises(Exception, match='Project is already initialized, cannot re-init'):
                 unpack_project(other_proj_id)
             with pytest.raises(Exception, match='Project is already initialized, cannot re-init'):
                 unpack_project(proj_id)

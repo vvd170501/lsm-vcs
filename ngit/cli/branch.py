@@ -1,8 +1,6 @@
 import click
 
-from ..context import get_context
-from ..core.nodes import resolve_named_node
-from ..core.refs import get_branch_events, get_head
+from ..core.refs import Branch, get_branch_events, get_head, update_branch
 from .common import require_repo
 
 
@@ -30,7 +28,7 @@ def create_branch(new_branch_name: str):
             exists = bool(branch)
     if exists:
         raise click.exceptions.ClickException(f'Branch "{new_branch_name}" already exists')
-    get_context().server.add_node(resolve_named_node('branch'), f'{new_branch_name}/{get_head()[0]}'.encode())
+    update_branch(Branch(new_branch_name, get_head()[0]))
 
 
 def list_branches() -> list[str]:

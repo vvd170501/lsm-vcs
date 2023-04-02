@@ -6,6 +6,15 @@ from ..context import get_context
 __all__ = ['resolve_named_node', 'create_named_node']
 
 
+class NodeName:
+    ROOT = 'root'
+    # create / update / delete
+    BRANCH_EVENTS = 'branch'
+    # Each commit contains a reference to its parent (builtin) and references to related file changes
+    COMMIT_TREE = 'commit'
+    FS = 'fs'  # File changes
+
+
 def _get_node_ids() -> dict[bytes, NodeId]:
     data = get_context().fs.read_file('.ngit/node_ids')
     return pickle.loads(data) if data else {}
