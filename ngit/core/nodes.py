@@ -18,6 +18,18 @@ def resolve_named_node(name: str | bytes) -> NodeId:
     return _get_node_ids().get(name, NodeId())
 
 
+def assign_name(node_id: NodeId, name: str | bytes) -> None:
+    if isinstance(name, str):
+        name = name.encode()
+        ctx = get_context()
+    node_ids = _get_node_ids()
+    # Add reverse index for faster lookup? In general, there shouldn't be many named nodes
+    if node_id in node_ids.values():
+        raise RuntimeError(f'Node "{node_id}" already has a name)')
+    node_ids[name] = node_id
+    ctx.fs.write_file('.ngit/node_ids', pickle.dumps(node_ids))
+
+
 def create_named_node(parent: NodeId, name: str | bytes, content: str | bytes = b'', exist_ok: bool = False) -> NodeId:
     if isinstance(name, str):
         name = name.encode()

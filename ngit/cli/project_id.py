@@ -1,3 +1,5 @@
+from base64 import b64encode
+
 import click
 
 from ..context import get_context
@@ -14,4 +16,5 @@ def _project_id() -> str:
         raise click.ClickException('Not in a ngit repository')
     proj_id = resolve_named_node('root')
     assert proj_id
-    return str(proj_id)
+    # To avoid special chars (e.g. '#' or any control chars)
+    return b64encode(proj_id.encode())

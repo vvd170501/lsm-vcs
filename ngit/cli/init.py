@@ -1,7 +1,20 @@
+from base64 import b64decode
+
 import click
 
-from ..core.nodes import create_named_node, resolve_named_node
+from ..backend import NodeId
+from ..context import get_context
+from ..core.nodes import assign_name, create_named_node, resolve_named_node
 from ..core.refs import set_head_ref
+
+
+class NodeNames:
+    ROOT = 'root'
+    # create / update / delete
+    BRANCH_EVENTS = 'branch'
+    # Each commit contains a reference to its parent (builtin) and references to related file changes
+    COMMIT_TREE = 'commit'
+    FS = 'fs'  # File changes
 
 
 @click.command()
@@ -21,20 +34,22 @@ def init_project():
     if resolve_named_node('root'):
         # Already initialized
         return
-    root_id = create_named_node('', 'root', content='ngit_project_root')
-    # Branch events: create / update / delete
-    create_named_node(root_id, 'branch')
-    # Commit tree. Each commit contains a reference to its parent and references to related file changes
-    create_named_node(root_id, 'commit')
-    # File changes
-    create_named_node(root_id, 'fs')
+    root_id = create_named_node('', NodeNames.ROOT, content='ngit_project_root')
+    create_named_node(root_id, NodeNames.BRANCH_EVENTS)
+    create_named_node(root_id, NodeNames.COMMIT_TREE)
+    create_named_node(root_id, NodeNames.FS)
     set_head_ref('')  # Create main branch?
 
 
 def unpack_project(project_id: str):
     # The project must already exist in the local DB replica.
-    if resolve_named_node('root'):
+    if resolve_named_node(NodeNames.ROOT):
         raise click.ClickException('Project is already initialized, cannot change id')
     if not project_id:
         raise click.ClickException('Project id must not be empty')
-    pass  # TODO!!
+    root_node: NodeId = b64decode(project_id).decode()
+    assign_name(root_node, NodeNames.ROOT)
+    subnodes = get_context().server.get_nodes(root_node)  # TODO limit
+    assign_name(next(subnodes).id, NodeNames.BRANCH_EVENTS)
+    assign_name(next(subnodes).id, NodeNames.COMMIT_TREE)
+    assign_name(next(subnodes).id, NodeNames.FS)
