@@ -5,7 +5,7 @@ import click
 from ..backend import NodeId
 from ..context import get_context
 from ..core.nodes import assign_name, create_named_node, resolve_named_node
-from ..core.refs import set_head_ref
+from ..core.refs import set_head
 
 
 class NodeNames:
@@ -36,9 +36,9 @@ def init_project():
         return
     root_id = create_named_node('', NodeNames.ROOT, content='ngit_project_root')
     create_named_node(root_id, NodeNames.BRANCH_EVENTS)
-    create_named_node(root_id, NodeNames.COMMIT_TREE)
+    commit_tree_root = create_named_node(root_id, NodeNames.COMMIT_TREE)
     create_named_node(root_id, NodeNames.FS)
-    set_head_ref('')  # Create main branch?
+    set_head(commit_tree_root)  # Create main branch?
 
 
 def unpack_project(project_id: str):
@@ -51,8 +51,9 @@ def unpack_project(project_id: str):
     subnodes = get_context().server.get_nodes(root_node)  # TODO limit
     try:
         assign_name(next(subnodes).id, NodeNames.BRANCH_EVENTS)
-        assign_name(next(subnodes).id, NodeNames.COMMIT_TREE)
+        commit_tree_root = assign_name(next(subnodes).id, NodeNames.COMMIT_TREE)
         assign_name(next(subnodes).id, NodeNames.FS)
         assign_name(root_node, NodeNames.ROOT)
+        set_head(commit_tree_root)  # Use main branch?
     except StopIteration:
         raise click.ClickException(f'Project {project_id} doesn\'t exist')
