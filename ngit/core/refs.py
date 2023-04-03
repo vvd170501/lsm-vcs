@@ -1,3 +1,4 @@
+from base64 import b64decode, b64encode
 from collections.abc import Iterator
 from dataclasses import dataclass
 
@@ -6,6 +7,17 @@ from ..context import get_context
 from .nodes import NodeName, resolve_named_node
 
 __all__ = ['get_head', 'set_head']
+
+
+RefId = NodeId
+
+
+def ref_to_str(ref: RefId) -> str:
+    return b64encode(ref.encode()).decode()
+
+
+def parse_ref(s: str) -> RefId:
+    return b64decode(s).decode()
 
 
 def get_head() -> tuple[NodeId, str]:
@@ -20,7 +32,7 @@ def set_head(ref: NodeId, branch: str = '') -> None:
 @dataclass
 class Branch:
     name: str
-    ref: NodeId
+    ref: RefId
 
     def __bool__(self):
         return self.ref != '[del]'

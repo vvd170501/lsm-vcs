@@ -114,6 +114,6 @@ def _commit(message: str) -> None:
                 was_repl = line[0] == '!'
                 # was_plus = line[0] == '+'
     fs.write_file(fs.root / '.ngit/db.ngit', pickle.dumps(db))
-    set_head(head)
+    set_head(head, current_branch)
     if current_branch:
         update_branch(Branch(current_branch, head))

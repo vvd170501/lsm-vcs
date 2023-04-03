@@ -1,4 +1,3 @@
-from base64 import b64encode
 from collections.abc import Iterator
 
 import click
@@ -6,7 +5,7 @@ import click
 from ..backend import Node
 from ..context import get_context
 from ..core.nodes import NodeName, resolve_named_node
-from ..core.refs import get_head
+from ..core.refs import get_head, ref_to_str
 from .common import require_repo
 
 
@@ -16,7 +15,7 @@ def log(**kwargs):
     for commit in _log(**kwargs):
         # TODO use hash-based commit ids?
         # TODO add info about branches
-        click.echo(f'{b64encode(commit.id.encode()).decode()} {commit.content.decode()}')
+        click.echo(f'{ref_to_str(commit.id)} {commit.content.decode()}')
 
 
 def _log() -> Iterator[Node]:
