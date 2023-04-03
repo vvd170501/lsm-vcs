@@ -129,7 +129,10 @@ def _commit(message: str) -> None:
         else:
             last_line_key = None
             for line in fs.read_file(file_path).splitlines(keepends=True):
-                line = line.decode('utf-8')
+                try:
+                    line = line.decode('utf-8')
+                except UnicodeDecodeError:
+                    raise click.ClickException(f'Binary files are not supported ({file_path})')
                 cur_line_key = generate_middle_string(last_line_key, None)
                 db.insert((head_bytes, str(file_path) + '/' + cur_line_key), line)
                 last_line_key = cur_line_key

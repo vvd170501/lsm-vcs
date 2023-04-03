@@ -12,7 +12,14 @@ def branch(branch: str | None):
         create_branch(branch)
     else:
         branches = list_branches()
-        click.echo('\n'.join(branches))  # TODO mark current branch
+        _, curr_branch = get_head()
+        for branch in branches:
+            if not curr_branch:
+                click.echo(branch)
+            elif branch == curr_branch:
+                click.secho('* ' + branch, fg='green')
+            else:
+                click.echo('  ' + branch)
 
 
 def create_branch(new_branch_name: str):
