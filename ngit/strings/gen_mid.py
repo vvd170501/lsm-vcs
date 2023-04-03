@@ -3,7 +3,7 @@ def generate_next_string(a: str) -> str | None:
     with characters in ['0', '2']"""
     a = list(a)
     i = len(a) - 1
-    while a[i] == '2':
+    while i != -1 and a[i] == '2':
         a[i] = '0'
         i -= 1
     if i == -1:
@@ -12,12 +12,23 @@ def generate_next_string(a: str) -> str | None:
     return ''.join(a)
 
 
-def generate_middle_string(a: str, b: str) -> str:
+def generate_middle_string(a: str | None, b: str | None) -> str:
     """Generate middle string in lexicographical order assuming that a, b
     consist of '0', '2' except for the last character which is always '1'
     and a < b."""
+    if a is None and b is None:
+        return '1'
+    if a is None:
+        return b[:-1] + '01'
+    if b is None:
+        res = generate_next_string(a[:-1])
+        if res is None:
+            return a[:-1] + '21'
+        return res + '1'
     if len(a) == len(b):
         if generate_next_string(a[:-1]) == b[:-1]:
             return a[:-1] + '21'
         return generate_next_string(a[:-1]) + '1'
-    return ''
+    if len(a) < len(b):
+        return b[:-1] + '01'
+    return a[:-1] + '21'

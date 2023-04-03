@@ -34,3 +34,8 @@ class KVDB(BaseDB):
         beg = bisect_left(commits, commit)
         end = bisect_right(commits, commit)
         return self._kv.keys()[beg:end]
+
+    def pprint(self, commit: bytes) -> None:
+        keys = self.filter_by_commit(commit)
+        for key in keys:
+            print(key[1], self._kv[key])
