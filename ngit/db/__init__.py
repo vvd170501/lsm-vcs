@@ -1,2 +1,2 @@
-from .db import BaseDB
+from .db import BaseDB, DBKey
 from .kvdb import KVDB

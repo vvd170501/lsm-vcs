@@ -32,3 +32,14 @@ class TestKVDB():
         assert kvdb.filter('1') == []
         kvdb.insert((b'', '0'), 1)
         assert kvdb.filter('1') == []
+
+    def test_filter_by_commit(self, kvdb):
+        kvdb.insert((b'0', '100'), '1')
+        kvdb.insert((b'1', '101'), '1')
+        kvdb.insert((b'0', '000'), '1')
+        kvdb.insert((b'1', '110'), '1')
+        kvdb.insert((b'2', '1000'), '1')
+        assert kvdb.filter_by_commit(b'0') == [(b'0', '000'), (b'0', '100')]
+        assert kvdb.filter_by_commit(b'1') == [(b'1', '101'), (b'1', '110')]
+        assert kvdb.filter_by_commit(b'2') == [(b'2', '1000')]
+        assert kvdb.filter_by_commit(b'3') == []
