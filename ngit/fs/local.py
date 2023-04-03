@@ -31,7 +31,7 @@ class LocalFS(BaseFS):
         return (dir_ / '.ngit').is_dir()
 
     @staticmethod
-    def _find_ngit_root() -> Path:
+    def find_ngit_root() -> Path:
         cwd = Path.cwd()
         if LocalFS._is_ngit_root(cwd):
             return cwd

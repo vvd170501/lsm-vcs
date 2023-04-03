@@ -18,3 +18,7 @@ class BaseFS(ABC):
     @abstractmethod
     def is_ngit_repo(self) -> bool:
         pass
+
+    @property
+    def root(self) -> str | PathLike:
+        pass
