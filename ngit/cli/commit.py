@@ -18,6 +18,7 @@ def commit(**kwargs):
 
 
 def _list_subfiles(fs, path: str, root: str | None = None):
+    # TODO move to fs
     if root is None:
         root = path
     if (str(path).split('/')[-1] == '.ngit'):
@@ -32,22 +33,21 @@ def _list_subfiles(fs, path: str, root: str | None = None):
 
 def create_commit(message: str) -> RefId:
     head, current_branch = get_head()
-    # TODO save diffs to FS tree, add node ids to commit content.
+    # XXX save diffs to FS tree in lseqdb, add node ids to commit content (guess this won't be implemented).
     # Use some more complex data type (also need to save merges)
-    context = get_context()
-    fs = context.fs
+
+    fs = get_context().fs
     # textchars = bytearray({7,8,9,10,12,13,27} | set(range(0x20, 0x100)) - {0x7f})
     # is_binary_string = lambda bytes: bool(bytes.translate(None, textchars))
     # Currently only support text files
     db_bytes = fs.read_file(fs.root / '.ngit/db.ngit')
     db = pickle.loads(db_bytes) if db_bytes is not None else KVDB()
-    head_bytes = pickle.dumps(head)  # TODO check. Do we need old or new head here?
+
+    # Build expected file contents
     files = dict()
     for node in reversed(list(iterate_history(head))):
-        for key in db.filter_by_commit(pickle.dumps(node.id)):
-            path_line = key[1].split('/')
-            file_path = '/'.join(path_line[:-1])
-            line = path_line[-1]
+        for key in db.filter_by_commit(pickle.dumps(node.id)):  # key = (bin_commit_id, path/line)
+            file_path, line = key[1].rsplit('/', 1)
             if line != '' and line[-1] == '-':
                 del files[file_path][line[:-1]]
             else:
@@ -57,10 +57,13 @@ def create_commit(message: str) -> RefId:
     file_contents = dict()
     for file_path in files:
         file_contents[file_path] = list(files[file_path].values())
-    # Currently, empty commits are allowed. Maybe they will be disabled later
+
+    # Write diffs to db
+    head_bytes = pickle.dumps(head)  # TODO check. Do we need old or new head here?
     head = get_context().server.add_node(head, message.encode())
     for file_path in _list_subfiles(fs, fs.root):
         if file_path in list(files.keys()):
+            # TODO move to separate function (may be reused for diff/show cmds)
             diff = list(context_diff(file_contents[file_path],
                                      list(map(lambda x: x.decode('utf-8'),
                                               fs.read_file(file_path).splitlines(keepends=True))),
@@ -127,7 +130,10 @@ def create_commit(message: str) -> RefId:
                 cur_line_key = generate_middle_string(last_line_key, None)
                 db.insert((head_bytes, str(file_path) + '/' + cur_line_key), line)
                 last_line_key = cur_line_key
+
     fs.write_file(fs.root / '.ngit/db.ngit', pickle.dumps(db))
+
+    # Currently, empty commits are allowed. Maybe they will be disabled later
     set_head(head, current_branch)
     if current_branch:
         update_branch(Branch(current_branch, head))
