@@ -16,4 +16,4 @@ def get_project_id() -> str:
     proj_id = resolve_named_node('root')
     assert proj_id
     # To avoid special chars (e.g. '#' or any control chars)
-    return b64encode(proj_id.encode())
+    return b64encode(proj_id.encode()).decode()

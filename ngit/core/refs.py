@@ -14,7 +14,7 @@ def get_head() -> tuple[NodeId, str]:
 
 
 def set_head(ref: NodeId, branch: str = '') -> None:
-    get_context().fs.write_file('.ngit/HEAD', f'{branch}/{ref}'.encode())
+    get_context().fs.write_file('.ngit/HEAD', f'{ref}/{branch}'.encode())
 
 
 @dataclass
