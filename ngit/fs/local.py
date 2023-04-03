@@ -1,4 +1,5 @@
 from os import PathLike
+from collections.abc import Iterable
 from pathlib import Path
 
 from .fs import BaseFS
@@ -22,6 +23,16 @@ class LocalFS(BaseFS):
         file.parent.mkdir(parents=True, exist_ok=True)
         return file.write_bytes(content)
 
+    def iter_dir(self, path: str | PathLike) -> Iterable:
+        return Path(self._root / path).iterdir()
+
+    def is_dir(self, path: str | PathLike) -> bool:
+        return Path(self._root / path).is_dir()
+
+    @property
+    def root(self) -> Path:
+        return self._root
+
     @property
     def is_ngit_repo(self) -> bool:
         return self._is_ngit_root(self._root)
@@ -31,7 +42,7 @@ class LocalFS(BaseFS):
         return (dir_ / '.ngit').is_dir()
 
     @staticmethod
-    def find_ngit_root() -> Path:
+    def _find_ngit_root() -> Path:
         cwd = Path.cwd()
         if LocalFS._is_ngit_root(cwd):
             return cwd

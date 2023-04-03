@@ -26,9 +26,19 @@ class MockFS(BaseFS):
         file.parent.mkdir(parents=True, exist_ok=True)
         return file.write_bytes(content)
 
+    def iter_dir(self, path: str | PathLike) -> Iterator[Path]:
+        return (self._root / path).iterdir()
+
+    def is_dir(self, path: str | PathLike) -> bool:
+        return (self._root / path).is_dir()
+
     @property
     def is_ngit_repo(self) -> bool:
         return True
+
+    @property
+    def root(self) -> str | PathLike:
+        return self._root
 
     def __del__(self):
         self._dir.cleanup()
