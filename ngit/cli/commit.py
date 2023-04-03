@@ -19,6 +19,6 @@ def _commit(message: str):
 
     # Currently, empty commits are allowed. Maybe they will be disabled later
     head = get_context().server.add_node(head, message.encode())
-    set_head(head)
+    set_head(head, current_branch)
     if current_branch:
         update_branch(Branch(current_branch, head))
