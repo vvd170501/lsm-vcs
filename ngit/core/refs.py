@@ -6,7 +6,7 @@ from ..backend import NodeId
 from ..context import get_context
 from .nodes import NodeName, resolve_named_node
 
-__all__ = ['get_head', 'set_head']
+__all__ = ['ref_to_str', 'parse_ref', 'get_head', 'set_head', 'Branch', 'get_branch_events', 'update_branch']
 
 
 RefId = NodeId
@@ -25,7 +25,8 @@ def get_head() -> tuple[NodeId, str]:
     return get_context().fs.read_file('.ngit/HEAD').decode().split('/')
 
 
-def set_head(ref: NodeId, branch: str = '') -> None:
+def set_head(ref: NodeId, branch: str) -> None:
+    # empty branch name = detached HEAD
     get_context().fs.write_file('.ngit/HEAD', f'{ref}/{branch}'.encode())
 
 
