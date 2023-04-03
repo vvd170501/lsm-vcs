@@ -7,6 +7,7 @@ import ngit.context
 from ngit.backend import HelicopterBackend
 from ngit.context.context import Context
 from ngit.cli.init import init_project
+from ngit.core.refs import RefId, get_head
 
 from mocks import MockFS, MockBackend
 
@@ -51,3 +52,11 @@ class NGitTest:
     def init_repo(self, mock_context: Context) -> None:
         if self.AUTO_INIT:
             init_project()
+
+    @property
+    def head(self) -> RefId:
+        return get_head()[0]
+
+    @property
+    def active_branch(self) -> str:
+        return get_head()[1]

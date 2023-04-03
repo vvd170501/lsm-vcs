@@ -5,8 +5,7 @@ import pickle
 
 from ..strings import generate_middle_string
 from ..context import get_context
-from ..core.refs import Branch, get_head, set_head, update_branch
-from ..core.nodes import NodeName, resolve_named_node
+from ..core.refs import Branch, RefId, get_head, iterate_history, set_head, update_branch
 from ..db import KVDB
 from .common import require_repo
 
@@ -15,15 +14,7 @@ from .common import require_repo
 @click.option('-m', '--message', required=True)  # interactive editor is not supported
 @require_repo
 def commit(**kwargs):
-    _commit(**kwargs)
-
-
-def _iterate_history(commit):
-    commit_tree = resolve_named_node(NodeName.COMMIT_TREE)
-    nodes = {node.id: node for node in get_context().server.get_nodes(commit_tree)}
-    while commit != commit_tree:
-        yield nodes[commit]
-        commit = nodes[commit].parent
+    create_commit(**kwargs)
 
 
 def _list_subfiles(fs, path: str, root: str | None = None):
@@ -39,7 +30,7 @@ def _list_subfiles(fs, path: str, root: str | None = None):
         yield str(path.relative_to(root))
 
 
-def _commit(message: str) -> None:
+def create_commit(message: str) -> RefId:
     head, current_branch = get_head()
     # TODO save diffs to FS tree, add node ids to commit content.
     # Use some more complex data type (also need to save merges)
@@ -50,9 +41,9 @@ def _commit(message: str) -> None:
     # Currently only support text files
     db_bytes = fs.read_file(fs.root / '.ngit/db.ngit')
     db = pickle.loads(db_bytes) if db_bytes is not None else KVDB()
-    head_bytes = pickle.dumps(head)
+    head_bytes = pickle.dumps(head)  # TODO check. Do we need old or new head here?
     files = dict()
-    for node in reversed(list(_iterate_history(head))):
+    for node in reversed(list(iterate_history(head))):
         for key in db.filter_by_commit(pickle.dumps(node.id)):
             path_line = key[1].split('/')
             file_path = '/'.join(path_line[:-1])
@@ -140,3 +131,4 @@ def _commit(message: str) -> None:
     set_head(head, current_branch)
     if current_branch:
         update_branch(Branch(current_branch, head))
+    return head

@@ -2,11 +2,16 @@ from base64 import b64decode, b64encode
 from collections.abc import Iterator
 from dataclasses import dataclass
 
-from ..backend import NodeId
+from ..backend import Node, NodeId
 from ..context import get_context
 from .nodes import NodeName, resolve_named_node
 
-__all__ = ['ref_to_str', 'parse_ref', 'get_head', 'set_head', 'Branch', 'get_branch_events', 'update_branch']
+__all__ = [
+    'ref_to_str', 'parse_ref',
+    'get_head', 'set_head',
+    'Branch', 'get_branch_events', 'update_branch',
+    'iterate_history'
+]
 
 
 RefId = NodeId
@@ -48,3 +53,13 @@ def get_branch_events() -> Iterator[Branch]:
 
 def update_branch(branch: Branch) -> None:
     get_context().server.add_node(resolve_named_node(NodeName.BRANCH_EVENTS), f'{branch.name}/{branch.ref}'.encode())
+
+
+def iterate_history(commit: RefId) -> Iterator[Node]:
+    commit_tree = resolve_named_node(NodeName.COMMIT_TREE)
+    # TODO use direct access to DB for more efficien GETs?
+    # Currently we get the whole tree, because there's no suitable API
+    nodes = {node.id: node for node in get_context().server.get_nodes(commit_tree)}
+    while commit != commit_tree:
+        yield nodes[commit]
+        commit = nodes[commit].parent

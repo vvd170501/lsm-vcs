@@ -11,14 +11,14 @@ from .common import require_repo
 @click.argument('target')
 @require_repo
 def checkout(**kwargs):
-    ref, branch = _checkout(**kwargs)
+    ref, branch = do_checkout(**kwargs)
     if branch:
         click.echo(f'Switched to branch \'{branch}\'')
     else:
         click.echo(f'HEAD is now at {ref_to_str(ref)} (detached)')
 
 
-def _checkout(target: str) -> tuple[NodeId, str]:
+def do_checkout(target: str) -> tuple[NodeId, str]:
     target_branch = None
     for branch in get_branch_events():
         if branch.name == target:

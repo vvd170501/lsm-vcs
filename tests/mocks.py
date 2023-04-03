@@ -97,7 +97,7 @@ class MockBackend(BaseBackend):
             if child.id > last_id:
                 yield Node(
                     id=NodeId(child.id),
-                    parent=subtree.id,
+                    parent=NodeId(subtree.id),
                     content=child.content
                 )
             yield from self._collect_nodes(child, last_id)
