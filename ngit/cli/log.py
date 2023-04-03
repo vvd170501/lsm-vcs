@@ -15,7 +15,8 @@ from .common import require_repo
 def log(**kwargs):
     for commit in _log(**kwargs):
         # TODO use hash-based commit ids?
-        print(f'{b64encode(commit.id.encode()).decode()} {commit.content.decode()}')
+        # TODO add info about branches
+        click.echo(f'{b64encode(commit.id.encode()).decode()} {commit.content.decode()}')
 
 
 def _log() -> Iterator[Node]:

@@ -12,7 +12,7 @@ def branch(branch: str | None):
         create_branch(branch)
     else:
         branches = list_branches()
-        click.echo('\n'.join(branches))  # mark current branch?
+        click.echo('\n'.join(branches))  # TODO mark current branch
 
 
 def create_branch(new_branch_name: str):
