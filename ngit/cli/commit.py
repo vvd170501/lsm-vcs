@@ -58,9 +58,11 @@ def create_commit(message: str) -> RefId:
     for file_path in files:
         file_contents[file_path] = list(files[file_path].values())
 
-    # Write diffs to db
-    head_bytes = pickle.dumps(head)  # TODO check. Do we need old or new head here?
+    # Create a new commit
     head = get_context().server.add_node(head, message.encode())
+    head_bytes = pickle.dumps(head)  # TODO check. Do we need old or new head here?
+
+    # Write diffs to db
     for file_path in _list_subfiles(fs, fs.root):
         if file_path in list(files.keys()):
             # TODO move to separate function (may be reused for diff/show cmds)
