@@ -19,6 +19,7 @@ setup(
         'Click',
         'grpcio',
         'protobuf',
+        'sortedcontainers',
     ],
     extras_require={
         'dev': [
