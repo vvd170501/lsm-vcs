@@ -10,10 +10,10 @@ class KVDB(BaseDB):
     def __init__(self) -> None:
         self._kv = SortedDict()
 
-    def insert(self, key: str, value: str) -> None:
+    def insert(self, key: str, value: str | bytes) -> None:
         self._kv[key] = value
 
-    def get(self, key: str) -> str | None:
+    def get(self, key: str) -> str | bytes | None:
         if key in self._kv:
             return self._kv[key]
         return None

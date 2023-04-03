@@ -6,12 +6,12 @@ __all__ = ['BaseDB']
 
 class BaseDB(ABC):
     @abstractmethod
-    def insert(self, key: str, value: str) -> None:
+    def insert(self, key: str, value: str | bytes) -> None:
         """Writes the key-value pair into the DB"""
         pass
 
     @abstractmethod
-    def get(self, key: str) -> str:
+    def get(self, key: str) -> str | bytes | None:
         pass
 
     @abstractmethod
