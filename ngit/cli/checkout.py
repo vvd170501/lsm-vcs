@@ -37,7 +37,7 @@ def _checkout(target: str) -> tuple[NodeId, str]:
     for node in get_context().server.get_nodes(commit_tree):
         # TODO use something better. Direct get?
         if node.id == ref:
-            set_head(ref)
+            set_head(ref, '')
             return ref, ''
 
     raise click.ClickException(f'Unknown target: "{target}" is not a branch name or commit id')

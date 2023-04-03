@@ -29,7 +29,7 @@ def init_project():
     create_named_node(root_id, NodeName.BRANCH_EVENTS)
     commit_tree_root = create_named_node(root_id, NodeName.COMMIT_TREE)
     create_named_node(root_id, NodeName.FS)
-    set_head(commit_tree_root)  # Create main branch?
+    set_head(commit_tree_root, '')  # Create main branch?
 
 
 def unpack_project(project_id: str):
@@ -45,6 +45,6 @@ def unpack_project(project_id: str):
         commit_tree_root = assign_name(next(subnodes).id, NodeName.COMMIT_TREE)
         assign_name(next(subnodes).id, NodeName.FS)
         assign_name(root_node, NodeName.ROOT)
-        set_head(commit_tree_root)  # Use main branch?
+        set_head(commit_tree_root, '')  # Use main branch?
     except StopIteration:
         raise click.ClickException(f'Project {project_id} doesn\'t exist')
