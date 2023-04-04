@@ -24,9 +24,13 @@ def _list_subfiles(fs, path: str, root: str | None = None):
     if (str(path).split('/')[-1] == '.ngit'):
         return
     if fs.is_dir(path):
+        is_empty = True
         for filename in fs.iter_dir(path):
+            is_empty = False
             for to_yield in _list_subfiles(fs, filename, root):
                 yield to_yield
+        if is_empty:
+            yield str(path.relative_to(root))
     else:
         yield str(path.relative_to(root))
 
@@ -50,12 +54,18 @@ def create_commit(message: str) -> RefId:
             file_path, line = key[1].rsplit('/', 1)
             if line != '' and line[-1] == '-':
                 del files[file_path][line[:-1]]
+            elif line != '' and line[-1] == '!':
+                del files[file_path]
+            elif line != '' and line[-1] == 'd':
+                files[file_path] = SortedDict({'d': ''})
             else:
-                if file_path not in files:
+                if file_path not in files or 'd' in files[file_path]:
                     files[file_path] = SortedDict()
                 files[file_path][line] = db.get(key)
     file_contents = dict()
     for file_path in files:
+        # if 'd' in files[file_path]:
+        #     del files[file_path]['d']
         file_contents[file_path] = list(files[file_path].values())
 
     # Create a new commit
@@ -64,7 +74,12 @@ def create_commit(message: str) -> RefId:
 
     # Write diffs to db
     for file_path in _list_subfiles(fs, fs.root):
-        if file_path in list(files.keys()):
+        if fs.is_dir(file_path):
+            db.insert((head_bytes, file_path + '/d'), '')
+        elif file_path in files:
+            if 'd' in files[file_path]:
+                del files[file_path]['d']
+                file_contents[file_path] = SortedDict()
             # TODO move to separate function (may be reused for diff/show cmds)
             diff = list(context_diff(file_contents[file_path],
                                      list(map(lambda x: x.decode('utf-8'),
@@ -122,6 +137,7 @@ def create_commit(message: str) -> RefId:
                         last_line = new_line
                 was_repl = line[0] == '!'
                 # was_plus = line[0] == '+'
+            del files[file_path]
         else:
             last_line_key = None
             for line in fs.read_file(file_path).splitlines(keepends=True):
@@ -132,6 +148,8 @@ def create_commit(message: str) -> RefId:
                 cur_line_key = generate_middle_string(last_line_key, None)
                 db.insert((head_bytes, str(file_path) + '/' + cur_line_key), line)
                 last_line_key = cur_line_key
+    for deleted_file_path in files:
+        db.insert((head_bytes, str(deleted_file_path) + '/!'), '')
 
     fs.write_file(fs.root / '.ngit/db.ngit', pickle.dumps(db))
 
