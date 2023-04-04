@@ -1,15 +1,16 @@
+from collections.abc import Iterator
 from os import PathLike
-from collections.abc import Iterable
 from pathlib import Path
+from shutil import rmtree
 
 from .fs import BaseFS
 
-__all__ = ['LocalFS']
+__all__ = ['BaseLocalFS', 'LocalFS']
 
 
-class LocalFS(BaseFS):
-    def __init__(self) -> None:
-        self._root = self._find_ngit_root()
+class BaseLocalFS(BaseFS):
+    def __init__(self, root: Path) -> None:
+        self._root = root
 
     def read_file(self, path: str | PathLike) -> bytes | None:
         file = self._root / path
@@ -23,7 +24,16 @@ class LocalFS(BaseFS):
         file.parent.mkdir(parents=True, exist_ok=True)
         return file.write_bytes(content)
 
-    def iter_dir(self, path: str | PathLike) -> Iterable:
+    def remove(self, path: str | PathLike) -> None:
+        file = self._root / path
+        if not file.exists():
+            return
+        if file.is_dir():
+            rmtree(file)
+        else:
+            file.unlink()
+
+    def iter_dir(self, path: str | PathLike) -> Iterator[Path]:
         return Path(self._root / path).iterdir()
 
     def is_dir(self, path: str | PathLike) -> bool:
@@ -40,6 +50,11 @@ class LocalFS(BaseFS):
     @staticmethod
     def _is_ngit_root(dir_: Path) -> bool:
         return (dir_ / '.ngit').is_dir()
+
+
+class LocalFS(BaseLocalFS):
+    def __init__(self) -> None:
+        super().__init__(self._find_ngit_root())
 
     @staticmethod
     def _find_ngit_root() -> Path:

@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from collections.abc import Iterable
+from collections.abc import Iterator
 from os import PathLike
 
 __all__ = ['BaseFS']
@@ -16,7 +16,12 @@ class BaseFS(ABC):
         pass
 
     @abstractmethod
-    def iter_dir(self, path: str | PathLike) -> Iterable:
+    def remove(self, path: str | PathLike) -> None:
+        """Removes a file or a directory, recursively. If the file doesn't exist, does nothing"""
+        pass
+
+    @abstractmethod
+    def iter_dir(self, path: str | PathLike) -> Iterator[str | PathLike]:
         pass
 
     @abstractmethod

@@ -1,44 +1,17 @@
 from __future__ import annotations
 
 from collections.abc import Iterator
-from os import PathLike
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
 from ngit.backend import BaseBackend, Node, NodeId, RemoteId
-from ngit.fs import BaseFS
+from ngit.fs.local import BaseLocalFS
 
 
-class MockFS(BaseFS):
+class MockFS(BaseLocalFS):
     def __init__(self) -> None:
         self._dir = TemporaryDirectory()
-        self._root = Path(self._dir.name)
-
-    def read_file(self, path: str | PathLike) -> bytes | None:
-        file = self._root / path
-        if not file.exists():
-            return None
-        assert file.is_file
-        return file.read_bytes()
-
-    def write_file(self, path: str | PathLike, content: bytes) -> int:
-        file = self._root / path
-        file.parent.mkdir(parents=True, exist_ok=True)
-        return file.write_bytes(content)
-
-    def iter_dir(self, path: str | PathLike) -> Iterator[Path]:
-        return (self._root / path).iterdir()
-
-    def is_dir(self, path: str | PathLike) -> bool:
-        return (self._root / path).is_dir()
-
-    @property
-    def is_ngit_repo(self) -> bool:
-        return True
-
-    @property
-    def root(self) -> str | PathLike:
-        return self._root
+        super().__init__(Path(self._dir.name))
 
     def __del__(self):
         self._dir.cleanup()
