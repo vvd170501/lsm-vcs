@@ -17,24 +17,6 @@ def commit(**kwargs):
     create_commit(**kwargs)
 
 
-def _list_subfiles(fs, path: str, root: str | None = None):
-    # TODO move to fs
-    if root is None:
-        root = path
-    if (str(path).split('/')[-1] == '.ngit'):
-        return
-    if fs.is_dir(path):
-        is_empty = True
-        for filename in fs.iter_dir(path):
-            is_empty = False
-            for to_yield in _list_subfiles(fs, filename, root):
-                yield to_yield
-        if is_empty:
-            yield str(path.relative_to(root))
-    else:
-        yield str(path.relative_to(root))
-
-
 def create_commit(message: str) -> RefId:
     head, current_branch = get_head()
     # XXX save diffs to FS tree in lseqdb, add node ids to commit content (guess this won't be implemented).
@@ -48,7 +30,7 @@ def create_commit(message: str) -> RefId:
     db = pickle.loads(db_bytes) if db_bytes is not None else KVDB()
 
     # Build expected file contents
-    files = dict()
+    files: dict[str, SortedDict[str, str]] = dict()
     for node in reversed(list(iterate_history(head))):
         for key in db.filter_by_commit(pickle.dumps(node.id)):  # key = (bin_commit_id, path/line)
             file_path, line = key[1].rsplit('/', 1)
@@ -73,7 +55,8 @@ def create_commit(message: str) -> RefId:
     head_bytes = pickle.dumps(head)  # TODO check. Do we need old or new head here?
 
     # Write diffs to db
-    for file_path in _list_subfiles(fs, fs.root):
+    file_path: str
+    for file_path in fs.rec_iter():
         if fs.is_dir(file_path):
             db.insert((head_bytes, file_path + '/d'), '')
         elif file_path in files:
@@ -113,7 +96,7 @@ def create_commit(message: str) -> RefId:
                 if old:
                     i += 1
                     if line[0] != ' ':
-                        db.insert((head_bytes, str(file_path) + '/' + files[file_path].keys()[i] + '-'), '')
+                        db.insert((head_bytes, file_path + '/' + files[file_path].keys()[i] + '-'), '')
                     if line[0] == '!' and not was_repl:
                         chunk_lengths.append(i)
                     if line[0] != '!' and was_repl:
@@ -133,7 +116,7 @@ def create_commit(message: str) -> RefId:
                         next_line = files[file_path].keys()[ni]
                     if line[0] != ' ':
                         new_line = generate_middle_string(last_line, next_line)
-                        db.insert((head_bytes, str(file_path) + '/' + new_line), line[2:])
+                        db.insert((head_bytes, file_path + '/' + new_line), line[2:])
                         last_line = new_line
                 was_repl = line[0] == '!'
                 # was_plus = line[0] == '+'
@@ -146,7 +129,7 @@ def create_commit(message: str) -> RefId:
                 except UnicodeDecodeError:
                     raise click.ClickException(f'Binary files are not supported ({file_path})')
                 cur_line_key = generate_middle_string(last_line_key, None)
-                db.insert((head_bytes, str(file_path) + '/' + cur_line_key), line)
+                db.insert((head_bytes, file_path + '/' + cur_line_key), line)
                 last_line_key = cur_line_key
     for deleted_file_path in files:
         db.insert((head_bytes, str(deleted_file_path) + '/!'), '')

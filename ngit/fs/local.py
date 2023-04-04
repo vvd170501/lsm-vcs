@@ -1,4 +1,4 @@
-from collections.abc import Iterator
+from collections.abc import Generator, Iterator
 from os import PathLike
 from pathlib import Path
 from shutil import rmtree
@@ -16,7 +16,7 @@ class BaseLocalFS(BaseFS):
         file = self._root / path
         if not file.exists():
             return None
-        assert file.is_file
+        assert file.is_file(), 'Only regular files are suppported'
         return file.read_bytes()
 
     def write_file(self, path: str | PathLike, content: bytes) -> int:
@@ -33,8 +33,24 @@ class BaseLocalFS(BaseFS):
         else:
             file.unlink()
 
-    def iter_dir(self, path: str | PathLike) -> Iterator[Path]:
-        return Path(self._root / path).iterdir()
+    def rec_iter(self) -> Iterator[str]:
+        assert self._root.is_dir()
+        yield from self._rec_iter(self._root)
+
+    def _rec_iter(self, dir_path: Path) -> Generator[str, None, bool]:
+        empty = True
+        for file in dir_path.iterdir():
+            if file.name == '.ngit':  # ignore even if this file/dir is not in root (like git)
+                continue
+            empty = False
+            if file.is_dir():
+                subdir_empty = yield from self._rec_iter(file)
+                if subdir_empty:
+                    yield str(file.relative_to(self._root))
+            else:
+                assert file.is_file(), 'Only regular files are suppported'
+                yield str(file.relative_to(self._root))
+        return empty
 
     def is_dir(self, path: str | PathLike) -> bool:
         return Path(self._root / path).is_dir()
