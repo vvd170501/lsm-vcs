@@ -3,8 +3,9 @@ import click
 from ..context import get_context
 from ..core.nodes import NodeName, resolve_named_node
 from ..core.refs import RefId, get_branch_events, parse_ref, get_head, set_head
-from .common import require_repo
 from ..db_img import build_image, write_image, load_db
+from ..db import KVDB
+from .common import require_repo
 
 
 @click.command()
@@ -54,7 +55,10 @@ def try_checkout_ref(ref: RefId) -> bool:
 
 def reset() -> None:
     fs = get_context().fs
-    write_image(fs, build_image(load_db(fs), get_head()[0]))
+    db = load_db(fs)
+    if db is None:
+        db = KVDB()  # TODO check correctness. Move default to load_db?
+    write_image(fs, build_image(db, get_head()[0]))
 
 
 # Wrappers for tests

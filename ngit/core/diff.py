@@ -2,11 +2,11 @@ import pickle
 
 from sortedcontainers import SortedDict  # type: ignore
 
-from ..db import KVDB
+from ..db import BaseDB
 from .refs import RefId, iterate_history
 
 
-def get_fs_state(db: KVDB, commit: RefId) -> tuple[dict[str, list[str]], dict[str, SortedDict[str, str]]]:
+def get_fs_state(db: BaseDB, commit: RefId) -> tuple[dict[str, list[str]], dict[str, SortedDict[str, str]]]:
     # Build expected file contents
     files: dict[str, SortedDict[str, str]] = dict()
     for node in reversed(list(iterate_history(commit))):

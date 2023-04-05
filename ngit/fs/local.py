@@ -24,6 +24,11 @@ class BaseLocalFS(BaseFS):
         file.parent.mkdir(parents=True, exist_ok=True)
         return file.write_bytes(content)
 
+    def mkdir(self, path: str | PathLike) -> None:
+        file = self._root / path
+        assert not file.exists() or file.is_dir()
+        file.mkdir(parents=True, exist_ok=True)
+
     def remove(self, path: str | PathLike) -> None:
         file = self._root / path
         if not file.exists():

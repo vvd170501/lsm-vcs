@@ -16,7 +16,11 @@ class BaseFS(ABC):
         pass
 
     @abstractmethod
-    def remove(self, path: str | PathLike) -> None:
+    def mkdir(self, path: str | PathLike) -> None:
+        pass
+
+    @abstractmethod
+    def remove(self, path: str | PathLike) -> None:  # Unused?
         """Removes a file or a directory, recursively. If the file doesn't exist, does nothing."""
         pass
 
