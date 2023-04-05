@@ -6,14 +6,20 @@ from ..core.refs import RefId, get_branch_events, parse_ref, get_head, set_head
 from ..db_img import build_image, write_image, load_db
 from ..db import KVDB
 from .common import require_repo
+from .branch import create_branch
 
 
 @click.command()
 @click.argument('target')
+@click.option('-b', 'chout', is_flag=True, help='Create branch.')
 @require_repo
-def checkout(target: str) -> None:
+def checkout(target: str, chout: bool) -> None:
     if not target:
         raise click.ClickException('Ref cannot be empty')
+    if chout:
+        create_branch(target)
+        assert try_checkout_branch(target)
+        return
     if target == 'HEAD':
         reset()
         return

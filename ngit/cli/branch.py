@@ -2,22 +2,15 @@ import click
 
 from ..core.refs import Branch, get_branch_events, get_head, update_branch
 from .common import require_repo
-from .checkout import try_checkout_branch
 
 
 @click.command()
 @click.argument('branch', required=False)
-@click.option('-b', 'chout', is_flag=True, help='Create and checkout branch.')
 @require_repo
-def branch(branch: str | None, chout: bool):
+def branch(branch: str | None):
     if branch is not None:
         create_branch(branch)
-        if chout:
-            assert try_checkout_branch(branch)
     else:
-        if chout:
-            click.echo('Error: no branch specified.')
-            return
         branches = list_branches()
         _, curr_branch = get_head()
         for branch in branches:
