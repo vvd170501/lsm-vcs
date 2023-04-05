@@ -12,19 +12,37 @@ from .common import require_repo
 
 
 @click.command()
+@click.option('-', '--short', is_flag=True)
 # TODO filter by dir
 @require_repo
-def status():
+def status(short: bool):
     for change in sorted(workdir_status(), key=lambda change: change.path):
-        print(f'{change.type.name.lower()}: {change.path}')
+        if short:
+            print(f'{change.type.short} {change.path}')
+        else:
+            print(f'{change.type.long}: {change.path}')
 
 
-@dataclass
+@dataclass(frozen=True)
 class Change:
     class Type(Enum):
-        ADDED = auto()
-        DELETED = auto()
-        MODIFIED = auto()
+        def __new__(cls, value, short: str):
+            obj = object.__new__(cls)
+            obj._value_ = value
+            obj._short = short
+            return obj
+
+        ADDED = auto(), '+'
+        DELETED = auto(), '-'
+        MODIFIED = auto(), 'M'
+
+        @property
+        def long(self) -> str:
+            return self.name.lower()
+
+        @property
+        def short(self) -> str:
+            return self._short
 
     path: str
     type: Type
@@ -44,7 +62,7 @@ def workdir_status() -> Iterator[Change]:
                     yield Change(file, Change.Type.MODIFIED)
             else:
                 if fs.is_dir(file) or fs.read_file(file) != content.encode('utf-8'):
-                    yield Change(file, Change.Type.CHANGED)
+                    yield Change(file, Change.Type.MODIFIED)
             del image[file]
         else:
             yield Change(file, Change.Type.ADDED)

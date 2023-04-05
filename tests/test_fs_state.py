@@ -5,11 +5,13 @@ import pytest
 from ngit.cli.branch import create_branch
 from ngit.cli.checkout import checkout_branch, checkout_ref
 from ngit.cli.commit import create_commit
+from ngit.cli.status import workdir_status
 
 from conftest import NGitTest, Context
 from mocks import MockFS
 
 
+# TODO move to db_img?
 @dataclass(frozen=True)
 class FSEntry:
     path: str  # Relative to root
@@ -20,7 +22,7 @@ class FSEntry:
 FSImage = set[FSEntry]
 
 
-class TestFSState(NGitTest):
+class FSStateTest(NGitTest):
     @pytest.fixture(autouse=True)
     def setup(self, init_repo, mock_context: Context) -> None:  # init_repo is requested for correct init order
         self._mock_context = mock_context
@@ -51,6 +53,8 @@ class TestFSState(NGitTest):
                 image.add(FSEntry(file, fs.read_file(file)))
         assert image == expected_image
 
+
+class TestCommitAndCheckout(FSStateTest):
     def test_file_content_changes(self, mock_fs: MockFS):
         ref0 = self.initial_commit
 
@@ -244,4 +248,81 @@ class TestFSState(NGitTest):
         self.expect_fs({
             FSEntry('test', b'new testdata'),
             FSEntry('testdir', is_dir=True),
+        })
+
+
+class TestStatus(FSStateTest):
+    def expect_changelist(self, expected: set[str]):
+        assert expected == {
+            f'{change.type.short} {change.path}' for change in workdir_status()
+        }
+
+    def test_added_files(self, mock_fs: MockFS):
+        mock_fs.write_file('test1', b'testdata1')
+        mock_fs.write_file('test2', b'testdata2')
+        mock_fs.write_file('test3/subfile', b'testdata3')
+        mock_fs.mkdir('test3/subdir')
+        mock_fs.mkdir('test4')
+        self.expect_changelist({
+            '+ test1',
+            '+ test2',
+            '+ test3/subfile',
+            '+ test3/subdir',
+            '+ test4',
+        })
+
+    def test_deleted_files(self, mock_fs: MockFS):
+        mock_fs.write_file('test1', b'testdata1')
+        mock_fs.write_file('test2', b'testdata2')
+        mock_fs.write_file('test3/subfile', b'testdata3')
+        mock_fs.mkdir('test3/subdir')
+        mock_fs.mkdir('test4')
+        create_commit('test')
+
+        mock_fs.clean()
+        self.expect_changelist({
+            '- test1',
+            '- test2',
+            '- test3/subfile',
+            '- test3/subdir',
+            '- test4',
+        })
+
+    def test_new_leaf_dir(self, mock_fs: MockFS):
+        mock_fs.mkdir('testdir/subdir')
+        create_commit('test')
+
+        mock_fs.remove('testdir/subdir')
+        self.expect_changelist({
+            # Yes, this is not a bug :)
+            '- testdir/subdir',
+            '+ testdir',
+        })
+
+    def test_changed_files(self, mock_fs: MockFS):
+        mock_fs.write_file('test1', b'testdata1')
+        mock_fs.write_file('test2', b'testdata2')
+        mock_fs.write_file('test3', b'testdata3')
+        create_commit('test')
+
+        mock_fs.write_file('test1', b'testdata1\nmore data')
+        mock_fs.write_file('test2', b'newtestdata2')
+        mock_fs.write_file('test3', b'')
+        self.expect_changelist({
+            'M test1',
+            'M test2',
+            'M test3',
+        })
+
+    def test_file_types(self, mock_fs: MockFS):
+        mock_fs.write_file('test1', b'testdata1')
+        mock_fs.mkdir('test2')
+        create_commit('test')
+
+        mock_fs.clean()
+        mock_fs.mkdir('test1')
+        mock_fs.write_file('test2', b'newtestdata2')
+        self.expect_changelist({
+            'M test1',
+            'M test2',
         })
