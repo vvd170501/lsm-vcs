@@ -45,8 +45,6 @@ def create_commit(message: str) -> RefId:
                 files[file_path][line] = db.get(key)
     file_contents = build_image(db, head)
     for file_path in files:
-        # if 'd' in files[file_path]:
-        #     del files[file_path]['d']
         file_contents[file_path] = list(files[file_path].values())
 
     # Create a new commit
@@ -105,7 +103,6 @@ def create_commit(message: str) -> RefId:
                         else:
                             i += 1
                         last_line = files[file_path].keys()[i]
-                    # ni = i + chunk_lengths[chunk_i] if line[0] == '!' else i + 1
                     ni = i + 1
                     if ni == len(files[file_path]):
                         next_line = None
