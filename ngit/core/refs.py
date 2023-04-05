@@ -63,3 +63,12 @@ def iterate_history(commit: RefId) -> Iterator[Node]:
     while commit != commit_tree:
         yield nodes[commit]
         commit = nodes[commit].parent
+
+
+def get_branch_id(branch_name: str) -> RefId | None:
+    target_branch = None
+    for branch in get_branch_events():
+        if branch.name == branch_name:
+            target_branch = branch.ref
+            # no break, need to get the latest event. TODO use reverse order?
+    return target_branch

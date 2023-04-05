@@ -39,14 +39,19 @@ def checkout(target: str, chout: bool) -> None:
         raise click.ClickException(f'Unknown target: "{target}" is not a branch name or commit id')
 
 
-def try_checkout_branch(target: str) -> bool:
+def get_branch_ref(branch_name: str) -> RefId | None:
     target_branch = None
     for branch in get_branch_events():
-        if branch.name == target:
-            target_branch = branch
+        if branch.name == branch_name:
+            target_branch = branch.ref
             # no break, need to get the latest event. TODO use reverse order?
-    if target_branch is not None:
-        set_head(target_branch.ref, target_branch.name)
+    return target_branch
+
+
+def try_checkout_branch(target: str) -> bool:
+    target_ref = get_branch_ref(target)
+    if target_ref is not None:
+        set_head(target_ref, target)
         reset()
         return True
     return False
