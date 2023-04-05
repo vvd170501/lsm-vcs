@@ -1,68 +1,17 @@
 from __future__ import annotations
 
-from collections.abc import Iterator, Iterable
-from os import PathLike
+from collections.abc import Iterator
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from shutil import rmtree
 
 from ngit.backend import BaseBackend, Node, NodeId, RemoteId
-from ngit.fs import BaseFS
+from ngit.fs.local import BaseLocalFS
 
 
-class MockFS(BaseFS):
+class MockFS(BaseLocalFS):
     def __init__(self) -> None:
         self._dir = TemporaryDirectory()
-        self._root = Path(self._dir.name)
-
-    def read_file(self, path: str | PathLike) -> bytes | None:
-        file = self._root / path
-        if not file.exists():
-            return None
-        assert file.is_file
-        return file.read_bytes()
-
-    def write_file(self, path: str | PathLike, content: bytes) -> int:
-        file = self._root / path
-        file.parent.mkdir(parents=True, exist_ok=True)
-        return file.write_bytes(content)
-
-    def clean(self) -> None:
-        for file_path in self.iter_dir(self._root):
-            if self.is_dir(file_path):
-                rmtree(file_path)
-            else:
-                Path(self._root / file_path).unlink()
-
-    def iter_dir(self, path: str | PathLike) -> Iterator[Path]:
-        return (self._root / path).iterdir()
-
-    def is_dir(self, path: str | PathLike) -> bool:
-        return (self._root / path).is_dir()
-
-    def list_subfiles(self, path: str, root: str | None = None) -> Iterable:
-        if root is None:
-            root = path
-        if (str(path).split('/')[-1] == '.ngit'):
-            return
-        if self.is_dir(path):
-            is_empty = True
-            for filename in self.iter_dir(path):
-                is_empty = False
-                for to_yield in self.list_subfiles(filename, root):
-                    yield to_yield
-            if is_empty:
-                yield str(path.relative_to(root))
-        else:
-            yield str(path.relative_to(root))
-
-    @property
-    def is_ngit_repo(self) -> bool:
-        return True
-
-    @property
-    def root(self) -> str | PathLike:
-        return self._root
+        super().__init__(Path(self._dir.name))
 
     def __del__(self):
         self._dir.cleanup()

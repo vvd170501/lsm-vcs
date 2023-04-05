@@ -4,6 +4,7 @@ dist
 build
 venv
 
+.vscode
 *.code-workspace
 
 .ngit

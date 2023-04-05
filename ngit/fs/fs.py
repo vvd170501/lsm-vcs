@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from collections.abc import Iterable
+from collections.abc import Iterator
 from os import PathLike
 
 __all__ = ['BaseFS']
@@ -8,7 +8,7 @@ __all__ = ['BaseFS']
 class BaseFS(ABC):
     @abstractmethod
     def read_file(self, path: str | PathLike) -> bytes | None:
-        """Returns contents of the file or None if the file doesn't exist."""
+        """Returns contents of the file or None if the file doesn't exist. Symlinks are not supported."""
         pass
 
     @abstractmethod
@@ -16,11 +16,8 @@ class BaseFS(ABC):
         pass
 
     @abstractmethod
-    def iter_dir(self, path: str | PathLike) -> Iterable:
-        pass
-
-    @abstractmethod
-    def list_subfiles(self, path: str, root: str | None = None) -> Iterable:
+    def remove(self, path: str | PathLike) -> None:
+        """Removes a file or a directory, recursively. If the file doesn't exist, does nothing."""
         pass
 
     @abstractmethod
@@ -29,6 +26,11 @@ class BaseFS(ABC):
 
     @abstractmethod
     def is_dir(self, path: str | PathLike) -> bool:
+        pass
+
+    @abstractmethod
+    def rec_iter(self) -> Iterator[str]:
+        """Yields root-relative paths to all files and empty directories, excluding ones named '.ngit'."""
         pass
 
     @property

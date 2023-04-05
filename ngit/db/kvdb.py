@@ -1,4 +1,4 @@
-from sortedcontainers import SortedDict, SortedSet
+from sortedcontainers import SortedDict, SortedSet  # type: ignore
 from bisect import bisect_left, bisect_right
 from .db import BaseDB, DBKey
 

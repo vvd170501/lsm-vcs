@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup  # type: ignore
 from ngit import __version__
 
 
@@ -24,8 +24,11 @@ setup(
     extras_require={
         'dev': [
             'grpcio-tools',
+            'mypy',
+            'grpc-stubs',
             'pre-commit',
             'pytest',
+            'types-protobuf',
         ]
     },
     python_requires='>=3.10',

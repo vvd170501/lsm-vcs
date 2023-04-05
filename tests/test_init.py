@@ -1,3 +1,4 @@
+from contextlib import AbstractContextManager
 from typing import Callable
 
 import pytest
@@ -12,7 +13,11 @@ from mocks import MockBackend, MockFS
 class TestInit(NGitTest):
     AUTO_INIT = False
 
-    def test_multiple_projects(self, mock_context: Context, use_context: Callable[[Context], Context]) -> None:
+    def test_multiple_projects(
+            self,
+            mock_context: Context,
+            use_context: Callable[[Context], AbstractContextManager[Context]]
+    ) -> None:
         init_project()
         id1 = get_project_id()
         with use_context(Context(MockFS(), mock_context.server)):
@@ -24,7 +29,11 @@ class TestInit(NGitTest):
         # Check that ids are unique
         assert len({id1, id2, id3}) == 3
 
-    def test_unpack_project(self, mock_context: Context, use_context: Callable[[Context], Context]) -> None:
+    def test_unpack_project(
+            self,
+            mock_context: Context,
+            use_context: Callable[[Context], AbstractContextManager[Context]]
+    ) -> None:
         init_project()
         proj_id = get_project_id()
         with use_context(Context(MockFS(), mock_context.server)):
@@ -45,7 +54,11 @@ class TestInit(NGitTest):
         init_project()
         assert get_project_id() == proj_id
 
-    def test_unpack_in_repo(self, mock_context: Context, use_context: Callable[[Context], Context]) -> None:
+    def test_unpack_in_repo(
+            self,
+            mock_context: Context,
+            use_context: Callable[[Context], AbstractContextManager[Context]]
+    ) -> None:
         init_project()
         proj_id = get_project_id()
         with use_context(Context(MockFS(), mock_context.server)):
@@ -58,7 +71,10 @@ class TestInit(NGitTest):
             with pytest.raises(Exception, match='Project is already initialized, cannot re-init'):
                 unpack_project(proj_id)
 
-    def test_unpack_unknown_id(self, mock_context: Context, use_context: Callable[[Context], Context]) -> None:
+    def test_unpack_unknown_id(
+            self,
+            use_context: Callable[[Context], AbstractContextManager[Context]]
+    ) -> None:
         with use_context(Context(MockFS(), MockBackend())):
             init_project()
             proj_id = get_project_id()
