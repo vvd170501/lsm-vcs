@@ -14,8 +14,10 @@ from .common import require_repo
 @click.command()
 @click.option('-m', '--message', required=True)  # interactive editor is not supported
 @require_repo
-def commit(**kwargs):
-    create_commit(**kwargs)
+def commit(message: str):
+    head = create_commit(message)
+    click.echo(f'Commit {ref_to_str(head)}')
+    click.echo(f'Message \'{message}\'')
 
 
 def create_commit(message: str) -> RefId:
@@ -121,6 +123,4 @@ def create_commit(message: str) -> RefId:
     set_head(head, current_branch)
     if current_branch:
         update_branch(Branch(current_branch, head))
-    click.echo(f'Commit {ref_to_str(head)}')
-    click.echo(f'Message \'{message}\'')
     return head

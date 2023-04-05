@@ -26,6 +26,7 @@ class BaseFS(ABC):
 
     @abstractmethod
     def clean(self) -> None:
+        """Removes all files and dirs except '/.ngit'."""
         pass
 
     @abstractmethod

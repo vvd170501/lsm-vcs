@@ -35,6 +35,10 @@ class NGitTest:
         return context
 
     @pytest.fixture
+    def mock_fs(self, mock_context: Context) -> MockFS:
+        return mock_context.fs
+
+    @pytest.fixture
     def use_context(self, monkeypatch):
 
         @contextmanager
