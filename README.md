@@ -47,6 +47,7 @@ $ mkdir repo
 $ cd repo
 $ ngit init
 $ ngit checkout -b main
+Created branch 'main'
 $ ngit commit -m "empty commits are allowed"
 Commit IzAwMDAwMDAwMjAwMDAwMDAwMDAwMTUwOQ==
 Message 'empty commits are allowed'
@@ -64,6 +65,7 @@ IzAwMDAwMDAwMjAwMDAwMDAwMDAwMTUyNQ== remove everything
 IzAwMDAwMDAwMjAwMDAwMDAwMDAwMTUxNw== add empty files
 IzAwMDAwMDAwMjAwMDAwMDAwMDAwMTUwOQ== empty commits are allowed
 $ ngit checkout -b branch
+Created branch 'branch'
 $ echo -e '123\n235\n345' >a
 $ ngit commit -m "write smth to a"
 Commit IzAwMDAwMDAwMjAwMDAwMDAwMDAwMTUzNw==
