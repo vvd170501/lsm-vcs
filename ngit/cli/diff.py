@@ -76,7 +76,7 @@ def _diff(ref: str):
                 for line in to_output:
                     click.echo(line, nl=False)
                     if line == '' or line[-1] != '\n':
-                        click.echo('\n\\No newline at the end of file')
+                        click.echo('\n\\ No newline at end of file')
             del image[file_path]
         else:
             if fs.is_dir(file_path):
@@ -94,7 +94,7 @@ def _diff(ref: str):
             for line in file_lines:
                 click.echo(f'+ {line}', nl=False)
                 if line == '' or line[-1] != '\n':
-                    click.echo('\n\\No newline at the end of file')
+                    click.echo('\n\\ No newline at end of file')
     for file_path in image:
         if image[file_path] is None:
             if not fs.is_dir(file_path):
@@ -107,4 +107,4 @@ def _diff(ref: str):
             for line in image_lines:
                 click.echo(f'- {line}', nl=False)
                 if line == '' or line[-1] != '\n':
-                    click.echo('\n\\No newline at the end of file')
+                    click.echo('\n\\ No newline at end of file')
