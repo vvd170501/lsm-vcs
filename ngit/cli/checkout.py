@@ -21,6 +21,7 @@ def checkout(target: str, chout: bool) -> None:
         head, _ = get_head()
         set_head(head, target)
         # No reset, like in git
+        click.echo(f'Created branch \'{target}\'')
         return
     if target == 'HEAD':
         reset()
