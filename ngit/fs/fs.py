@@ -20,6 +20,14 @@ class BaseFS(ABC):
         pass
 
     @abstractmethod
+    def list_subfiles(self, path: str, root: str | None = None) -> Iterable:
+        pass
+
+    @abstractmethod
+    def clean(self) -> None:
+        pass
+
+    @abstractmethod
     def is_dir(self, path: str | PathLike) -> bool:
         pass
 

@@ -8,6 +8,7 @@ from ..context import get_context
 from ..core.refs import Branch, RefId, get_head, iterate_history, set_head, update_branch
 from ..db import KVDB
 from .common import require_repo
+from ..db_img import build_image, load_db, dump_db
 
 
 @click.command()
@@ -17,35 +18,15 @@ def commit(**kwargs):
     create_commit(**kwargs)
 
 
-def _list_subfiles(fs, path: str, root: str | None = None):
-    # TODO move to fs
-    if root is None:
-        root = path
-    if (str(path).split('/')[-1] == '.ngit'):
-        return
-    if fs.is_dir(path):
-        is_empty = True
-        for filename in fs.iter_dir(path):
-            is_empty = False
-            for to_yield in _list_subfiles(fs, filename, root):
-                yield to_yield
-        if is_empty:
-            yield str(path.relative_to(root))
-    else:
-        yield str(path.relative_to(root))
-
-
 def create_commit(message: str) -> RefId:
     head, current_branch = get_head()
     # XXX save diffs to FS tree in lseqdb, add node ids to commit content (guess this won't be implemented).
     # Use some more complex data type (also need to save merges)
 
     fs = get_context().fs
-    # textchars = bytearray({7,8,9,10,12,13,27} | set(range(0x20, 0x100)) - {0x7f})
-    # is_binary_string = lambda bytes: bool(bytes.translate(None, textchars))
-    # Currently only support text files
-    db_bytes = fs.read_file(fs.root / '.ngit/db.ngit')
-    db = pickle.loads(db_bytes) if db_bytes is not None else KVDB()
+    db = load_db(fs)
+    if db is None:
+        db = KVDB()
 
     # Build expected file contents
     files = dict()
@@ -62,7 +43,7 @@ def create_commit(message: str) -> RefId:
                 if file_path not in files or 'd' in files[file_path]:
                     files[file_path] = SortedDict()
                 files[file_path][line] = db.get(key)
-    file_contents = dict()
+    file_contents = build_image(db, head)
     for file_path in files:
         # if 'd' in files[file_path]:
         #     del files[file_path]['d']
@@ -70,10 +51,10 @@ def create_commit(message: str) -> RefId:
 
     # Create a new commit
     head = get_context().server.add_node(head, message.encode())
-    head_bytes = pickle.dumps(head)  # TODO check. Do we need old or new head here?
+    head_bytes = pickle.dumps(head)
 
     # Write diffs to db
-    for file_path in _list_subfiles(fs, fs.root):
+    for file_path in fs.list_subfiles(fs.root):
         if fs.is_dir(file_path):
             db.insert((head_bytes, file_path + '/d'), '')
         elif file_path in files:
@@ -90,7 +71,6 @@ def create_commit(message: str) -> RefId:
             chunk_lengths = []
             chunk_i = -1
             was_repl = False
-            # was_plus = False
             last_line = None
             for line in diff:
                 if line[:4] == '****':
@@ -105,7 +85,6 @@ def create_commit(message: str) -> RefId:
                     if was_repl:
                         chunk_lengths[-1] = i - chunk_lengths[-1]
                     was_repl = False
-                    # was_plus = False
                     i = int(line.split()[1].split(',')[0]) - 2
                     chunk_i = 0
                     old = False
@@ -126,7 +105,8 @@ def create_commit(message: str) -> RefId:
                         else:
                             i += 1
                         last_line = files[file_path].keys()[i]
-                    ni = i + chunk_lengths[chunk_i] if line[0] == '!' else i + 1
+                    # ni = i + chunk_lengths[chunk_i] if line[0] == '!' else i + 1
+                    ni = i + 1
                     if ni == len(files[file_path]):
                         next_line = None
                     else:
@@ -136,22 +116,23 @@ def create_commit(message: str) -> RefId:
                         db.insert((head_bytes, str(file_path) + '/' + new_line), line[2:])
                         last_line = new_line
                 was_repl = line[0] == '!'
-                # was_plus = line[0] == '+'
             del files[file_path]
         else:
             last_line_key = None
-            for line in fs.read_file(file_path).splitlines(keepends=True):
-                try:
-                    line = line.decode('utf-8')
-                except UnicodeDecodeError:
-                    raise click.ClickException(f'Binary files are not supported ({file_path})')
+            try:
+                lines = fs.read_file(file_path).decode('utf-8').splitlines(keepends=True)
+            except UnicodeDecodeError:
+                raise click.ClickException(f'Binary files are not supported ({file_path})')
+            if lines == []:
+                lines = ['']
+            for line in lines:
                 cur_line_key = generate_middle_string(last_line_key, None)
                 db.insert((head_bytes, str(file_path) + '/' + cur_line_key), line)
                 last_line_key = cur_line_key
     for deleted_file_path in files:
         db.insert((head_bytes, str(deleted_file_path) + '/!'), '')
 
-    fs.write_file(fs.root / '.ngit/db.ngit', pickle.dumps(db))
+    dump_db(fs, db)
 
     # Currently, empty commits are allowed. Maybe they will be disabled later
     set_head(head, current_branch)

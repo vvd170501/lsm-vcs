@@ -2,29 +2,32 @@ import click
 
 from ..context import get_context
 from ..core.nodes import NodeName, resolve_named_node
-from ..core.refs import RefId, get_branch_events, parse_ref, set_head
+from ..core.refs import RefId, get_branch_events, parse_ref, get_head, set_head
 from .common import require_repo
+from ..db_img import build_image, write_image, load_db
 
 
 @click.command()
 @click.argument('target')
 @require_repo
-def checkout(target: str):
+def checkout(target: str) -> None:
     if not target:
         raise click.ClickException('Ref cannot be empty')
+    if target == 'HEAD':
+        reset()
+        return
     if try_checkout_branch(target):
         click.echo(f'Switched to branch \'{target}\'')
-        return
-
-    try:
-        ref = parse_ref(target)
-    except Exception:
-        raise click.ClickException(f'Unknown target: "{target}" is not a branch name or commit id')
-    if try_checkout_ref(ref):
-        click.echo(f'HEAD is now at {target} (detached)')
-        return
-
-    raise click.ClickException(f'Unknown target: "{target}" is not a branch name or commit id')
+    else:
+        try:
+            ref = parse_ref(target)
+        except Exception:
+            raise click.ClickException(f'Unknown target: "{target}" is not a branch name or commit id')
+        if try_checkout_ref(ref):
+            click.echo(f'HEAD is now at {target} (detached)')
+        else:
+            raise click.ClickException(f'Unknown target: "{target}" is not a branch name or commit id')
+    reset()
 
 
 def try_checkout_branch(target: str) -> bool:
@@ -47,6 +50,11 @@ def try_checkout_ref(ref: RefId) -> bool:
             set_head(ref, '')
             return True
     return False
+
+
+def reset() -> None:
+    fs = get_context().fs
+    write_image(fs, build_image(load_db(fs), get_head()[0]))
 
 
 # Wrappers for tests
