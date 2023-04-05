@@ -111,3 +111,7 @@ b
 ## Особенности работы
 
 - `HEAD` при инициализации находится в состоянии `detached`, так как ветки по умолчанию нет
+
+## Демо
+
+См. здесь: https://github.com/vvd170501/lsm-vcs/blob/master/demo/showcase.webm
