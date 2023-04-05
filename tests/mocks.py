@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Iterator
+from os import PathLike
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
@@ -12,6 +13,10 @@ class MockFS(BaseLocalFS):
     def __init__(self) -> None:
         self._dir = TemporaryDirectory()
         super().__init__(Path(self._dir.name))
+
+    def safe_remove(self, path: str | PathLike) -> None:
+        assert (self._root / path).exists(), f'Remove called for non-existent file: {path}'
+        return super().remove(path)
 
     def __del__(self):
         self._dir.cleanup()
