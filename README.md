@@ -40,7 +40,7 @@ export HELICOPTER_ADDRESS=0.0.0.0
 - `ngit commit -m "commit message"`
 - `ngit log`
 
-Пример использования:
+## Пример использования
 
 ```bash
 $ mkdir repo
@@ -103,3 +103,7 @@ a  dir
 $ ls dir
 b
 ```
+
+## Особенности работы
+
+- HEAD при инициализации находится в состоянии detached, так как ветки по умолчанию нет
