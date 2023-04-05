@@ -47,7 +47,7 @@ def create_named_node(parent: NodeId, name: str | bytes, content: str | bytes = 
     node_ids = _get_node_ids()
     if name in node_ids:
         if not exist_ok:
-            raise RuntimeError(f'Named nodes must be unique (node "{name}" already exists)')
+            raise RuntimeError(f'Named nodes must be unique (node "{name!r}" already exists)')
         return node_ids[name]
     if isinstance(content, str):
         content = content.encode()

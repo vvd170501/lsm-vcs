@@ -20,7 +20,7 @@ class Context:
         return self._server
 
 
-_context = None
+_context: Context | None = None
 
 
 # A separate function is used to allow monkeypatching

@@ -1,6 +1,6 @@
 import pickle
 
-from sortedcontainers import SortedDict
+from sortedcontainers import SortedDict  # type: ignore
 
 from ..db import KVDB
 from .refs import RefId, iterate_history

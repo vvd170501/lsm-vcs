@@ -25,7 +25,7 @@ class BaseFS(ABC):
         pass
 
     @abstractmethod
-    def rec_iter(self, path: str | PathLike) -> Iterator[str]:
+    def rec_iter(self) -> Iterator[str]:
         """Yields root-relative paths to all files and empty directories, excluding ones named '.ngit'."""
         pass
 

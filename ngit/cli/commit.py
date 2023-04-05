@@ -53,7 +53,7 @@ def create_commit(message: str) -> RefId:
                                      n=0))[2:]
             i = -1
             old = None
-            chunk_lengths = []
+            chunk_lengths: list[int] = []
             chunk_i = -1
             was_repl = False
             # was_plus = False
@@ -106,9 +106,9 @@ def create_commit(message: str) -> RefId:
             del lastdiffs[file_path]
         else:
             last_line_key = None
-            for line in fs.read_file(file_path).splitlines(keepends=True):
+            for bin_line in fs.read_file(file_path).splitlines(keepends=True):
                 try:
-                    line = line.decode('utf-8')
+                    line = bin_line.decode('utf-8')
                 except UnicodeDecodeError:
                     raise click.ClickException(f'Binary files are not supported ({file_path})')
                 cur_line_key = generate_middle_string(last_line_key, None)

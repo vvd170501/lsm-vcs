@@ -1,10 +1,11 @@
+from collections.abc import Generator
 from contextlib import contextmanager
 from os import environ
 
 import pytest
 
 import ngit.context
-from ngit.backend import HelicopterBackend
+from ngit.backend import BaseBackend, HelicopterBackend
 from ngit.context.context import Context
 from ngit.cli.init import init_project
 from ngit.core.refs import RefId, get_head
@@ -17,6 +18,7 @@ class NGitTest:
 
     @pytest.fixture(autouse=True)
     def mock_context(self, monkeypatch) -> Context:
+        backend: BaseBackend
         if int(environ.get('USE_HELICOPTER', '0')) > 0:
             backend = HelicopterBackend(
                 environ.get('HELICOPTER_ADDRESS', '127.0.0.1'),
@@ -36,7 +38,7 @@ class NGitTest:
     def use_context(self, monkeypatch):
 
         @contextmanager
-        def temp_context(context: Context) -> Context:
+        def temp_context(context: Context) -> Generator[Context, None, None]:
             def get_context():
                 return context
             try:
