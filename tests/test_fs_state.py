@@ -51,7 +51,7 @@ class TestFSState(NGitTest):
                 image.add(FSEntry(file, fs.read_file(file)))
         assert image == expected_image
 
-    def test_create_file(self, mock_fs: MockFS):
+    def test_file_content_changes(self, mock_fs: MockFS):
         ref0 = self.initial_commit
 
         mock_fs.write_file('test', b'testdata')
@@ -170,4 +170,26 @@ class TestFSState(NGitTest):
             FSEntry('testdir2/subfile', b'testdata2'),
         })
 
-    # TODO test branch checkout
+    def test_branch_checkout(self, mock_fs: MockFS):
+        create_branch('test')
+
+        mock_fs.write_file('test', b'testdata')
+        create_commit('main1')
+
+        checkout_branch('test')
+        self.expect_fs(set())
+
+        mock_fs.mkdir('testdir')
+        mock_fs.write_file('test', b'new testdata')
+        create_commit('test1')
+
+        checkout_branch('main')
+        self.expect_fs({
+            FSEntry('test', b'testdata'),
+        })
+
+        checkout_branch('test')
+        self.expect_fs({
+            FSEntry('test', b'new testdata'),
+            FSEntry('testdir', is_dir=True),
+        })
