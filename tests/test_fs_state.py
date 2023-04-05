@@ -170,6 +170,58 @@ class TestFSState(NGitTest):
             FSEntry('testdir2/subfile', b'testdata2'),
         })
 
+    def test_file_type_changes(self, mock_fs: MockFS):
+        ref0 = self.initial_commit
+
+        mock_fs.write_file('test1', b'testdata1')
+        mock_fs.write_file('test2', b'testdata2')
+        mock_fs.write_file('test3/subfile', b'testdata3')
+        mock_fs.mkdir('test4')
+        ref1 = create_commit('main1')
+
+        mock_fs.clean()
+        self.expect_fs(set())
+        mock_fs.mkdir('test1')
+        mock_fs.write_file('test2/subfile', b'new testdata2')
+        mock_fs.write_file('test3', b'new testdata3')
+        mock_fs.write_file('test4', b'new testdata4')
+        ref2 = create_commit('main2')
+
+        mock_fs.clean()
+        self.expect_fs(set())
+        mock_fs.write_file('test1', b'testdata1')
+        mock_fs.write_file('test2', b'testdata2')
+        mock_fs.write_file('test3/subfile', b'testdata3')
+        mock_fs.mkdir('test4')
+        ref3 = create_commit('main3')
+
+        checkout_ref(ref0)
+        self.expect_fs(set())
+
+        checkout_ref(ref1)
+        self.expect_fs({
+            FSEntry('test1', b'testdata1'),
+            FSEntry('test2', b'testdata2'),
+            FSEntry('test3/subfile', b'testdata3'),
+            FSEntry('test4', is_dir=True),
+        })
+
+        checkout_ref(ref2)
+        self.expect_fs({
+            FSEntry('test1', is_dir=True),
+            FSEntry('test2/subfile', b'new testdata2'),
+            FSEntry('test3', b'new testdata3'),
+            FSEntry('test4', b'new testdata4'),
+        })
+
+        checkout_ref(ref3)
+        self.expect_fs({
+            FSEntry('test1', b'testdata1'),
+            FSEntry('test2', b'testdata2'),
+            FSEntry('test3/subfile', b'testdata3'),
+            FSEntry('test4', is_dir=True),
+        })
+
     def test_branch_checkout(self, mock_fs: MockFS):
         create_branch('test')
 
