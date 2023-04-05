@@ -27,7 +27,7 @@ make build
 
 ```bash
 export HELICOPTER_PORT=1228
-export HELICOPTER_ADDRESS=0.0.0.0
+export HELICOPTER_ADDRESS=127.0.0.1
 ```
 
 3. Использовать!
