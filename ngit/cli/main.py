@@ -11,6 +11,7 @@ from .log import log
 from .merge import merge
 from .project_id import project_id
 from .show import show
+from .status import status
 
 
 @click.group
@@ -31,6 +32,7 @@ for cmd in [
     project_id,
     # pull,
     show,
+    status,
     # remote,
 ]:
     main.add_command(cmd)

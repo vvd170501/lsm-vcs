@@ -39,7 +39,8 @@ export HELICOPTER_ADDRESS=127.0.0.1
 - `ngit branch [branch]`
 - `ngit commit -m "commit message"`
 - `ngit log`
-  - `ngit diff [branch/commit]`
+- `ngit diff [branch/commit]`
+- `ngit status`
 
 ## Пример использования
 
