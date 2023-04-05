@@ -12,7 +12,7 @@ from .common import require_repo
 
 
 @click.command()
-@click.option('-', '--short', is_flag=True)
+@click.option('-s', '--short', is_flag=True)
 # TODO filter by dir
 @require_repo
 def status(short: bool):
