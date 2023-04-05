@@ -18,7 +18,9 @@ def checkout(target: str, chout: bool) -> None:
         raise click.ClickException('Ref cannot be empty')
     if chout:
         create_branch(target)
-        assert try_checkout_branch(target)
+        head, _ = get_head()
+        set_head(head, target)
+        # No reset, like in git
         return
     if target == 'HEAD':
         reset()

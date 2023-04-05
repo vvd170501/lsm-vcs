@@ -33,3 +33,9 @@ class TestBranch(NGitTest):
         create_branch('test2')
         with pytest.raises(Exception, match='Branch "test2" already exists'):
             create_branch('test2')
+
+    def test_create_branch_bad_names(self):
+        with pytest.raises(Exception, match='Empty branch name is not allowed'):
+            create_branch('')
+        with pytest.raises(Exception, match='Cannot create branch: "HEAD" is reserved'):
+            create_branch('HEAD')

@@ -25,6 +25,8 @@ def branch(branch: str | None):
 def create_branch(new_branch_name: str):
     if not new_branch_name:
         raise click.ClickException('Empty branch name is not allowed')
+    if new_branch_name == 'HEAD':
+        raise click.ClickException('Cannot create branch: "HEAD" is reserved')
     exists = False
     # TODO optimize.
     # - Use reverse order. If the last event wasn't a deletion, then the branch exists
