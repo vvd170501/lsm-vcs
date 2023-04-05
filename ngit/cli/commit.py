@@ -5,7 +5,7 @@ import pickle
 from ..strings import generate_middle_string
 from ..context import get_context
 from ..core.diff import get_fs_state
-from ..core.refs import Branch, RefId, get_head, set_head, update_branch
+from ..core.refs import Branch, RefId, get_head, set_head, update_branch, ref_to_str
 from ..db import KVDB
 from .common import require_repo
 from ..db_img import load_db, dump_db
@@ -121,4 +121,6 @@ def create_commit(message: str) -> RefId:
     set_head(head, current_branch)
     if current_branch:
         update_branch(Branch(current_branch, head))
+    click.echo(f'Commit {ref_to_str(head)}')
+    click.echo(f'Message \'{message}\'')
     return head
