@@ -19,16 +19,15 @@ def checkout(target: str) -> None:
         return
     if try_checkout_branch(target):
         click.echo(f'Switched to branch \'{target}\'')
+        return
+    try:
+        ref = parse_ref(target)
+    except Exception:
+        raise click.ClickException(f'Unknown target: "{target}" is not a branch name or commit id')
+    if try_checkout_ref(ref):
+        click.echo(f'HEAD is now at {target} (detached)')
     else:
-        try:
-            ref = parse_ref(target)
-        except Exception:
-            raise click.ClickException(f'Unknown target: "{target}" is not a branch name or commit id')
-        if try_checkout_ref(ref):
-            click.echo(f'HEAD is now at {target} (detached)')
-        else:
-            raise click.ClickException(f'Unknown target: "{target}" is not a branch name or commit id')
-    reset()
+        raise click.ClickException(f'Unknown target: "{target}" is not a branch name or commit id')
 
 
 def try_checkout_branch(target: str) -> bool:
@@ -39,6 +38,7 @@ def try_checkout_branch(target: str) -> bool:
             # no break, need to get the latest event. TODO use reverse order?
     if target_branch is not None:
         set_head(target_branch.ref, target_branch.name)
+        reset()
         return True
     return False
 
@@ -49,6 +49,7 @@ def try_checkout_ref(ref: RefId) -> bool:
         # TODO use something better. Direct get?
         if node.id == ref:
             set_head(ref, '')
+            reset()
             return True
     return False
 

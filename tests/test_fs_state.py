@@ -25,6 +25,7 @@ class TestFSState(NGitTest):
         self._mock_context = mock_context
         create_branch('main')
         checkout_branch('main')
+        self.initial_commit = create_commit('Initial commit')
 
     def write_fs(self, image: FSImage, context: Context | None = None):
         if context is None:
@@ -49,9 +50,8 @@ class TestFSState(NGitTest):
                 image.add(FSEntry(file, fs.read_file(file)))
         assert image == expected_image
 
-    @pytest.mark.skip(reason='checkout fails for some reason')
     def test_create_file(self, mock_context: Context):
-        ref0 = self.head
+        ref0 = self.initial_commit
         mock_context.fs.write_file('test', b'testdata')
         ref1 = create_commit('main1')
         mock_context.fs.write_file('subdir/test2', b'other data')
@@ -82,4 +82,4 @@ class TestFSState(NGitTest):
             FSEntry('subdir/test2', b'other data')
         })
 
-    # TODO empty dirs, deletion
+    # TODO empty dirs, deletion, checkout branch
